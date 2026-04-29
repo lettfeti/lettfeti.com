@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#0b0b0c" media="(prefers-color-scheme: dark)" />
+    <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
+    <title>Where to Park · Reykjavík</title>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%23005bbb'/%3E%3Ctext x='50%25' y='54%25' text-anchor='middle' font-family='system-ui' font-size='44' font-weight='700' fill='white' dominant-baseline='middle'%3EP%3C/text%3E%3C/svg%3E" />
+    <script type="module" crossorigin src="/parking/assets/index-BXiwLfb4.js"></script>
+    <link rel="stylesheet" crossorigin href="/parking/assets/index-gCQdYKxM.css">
+  </head>
+  <body>
+    <main id="app">
+      <header class="topbar">
+        <h1>Where to park</h1>
+      </header>
+
+      <section class="controls" aria-label="Search">
+        <div class="row">
+          <input
+            id="dest"
+            type="search"
+            inputmode="search"
+            autocomplete="off"
+            placeholder="Destination address in Reykjavík"
+            aria-label="Destination"
+          />
+          <button id="locate" type="button" title="Use my location" aria-label="Use my location">📍</button>
+        </div>
+        <ul id="suggest" class="suggest" hidden></ul>
+
+        <div class="row split">
+          <label>
+            <span>Arrive</span>
+            <input id="arrive" type="datetime-local" />
+          </label>
+          <label>
+            <span>For</span>
+            <select id="duration">
+              <option value="30">30 min</option>
+              <option value="60" selected>1 h</option>
+              <option value="90">1.5 h</option>
+              <option value="120">2 h</option>
+              <option value="180">3 h</option>
+              <option value="240">4 h</option>
+              <option value="360">6 h</option>
+              <option value="480">8 h</option>
+            </select>
+          </label>
+        </div>
+
+        <label class="slider">
+          <span>Walk up to <output id="radiusOut">500</output> m</span>
+          <input id="radius" type="range" min="200" max="1200" step="50" value="500" />
+        </label>
+      </section>
+
+      <div id="map" aria-label="Map of parking zones"></div>
+
+      <section id="results" class="results" aria-live="polite"></section>
+
+      <footer class="foot">
+        Data: <a href="https://data-reykjavik.opendata.arcgis.com/" target="_blank" rel="noopener">Reykjavíkurborg open data</a> ·
+        Tiles © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> ·
+        Geocoding: Nominatim
+      </footer>
+    </main>
+  </body>
+</html>
