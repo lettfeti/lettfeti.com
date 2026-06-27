@@ -5,7 +5,8 @@
 // fixtures — including knockout matches once they're drawn at the team's
 // position. Subscribed calendars re-poll and update on their own.
 import { scrape } from "../lib/torneopal.mjs";
-import { buildICS } from "../lib/ics.mjs";
+import { buildICS, buildVaktirICS } from "../lib/ics.mjs";
+import bundledVaktir from "../lib/vaktir.mjs";
 
 export const config = { maxDuration: 30 };
 
@@ -17,6 +18,7 @@ async function getData() {
     turnaus: process.env.N1_TURNAUS,
     club: process.env.N1_CLUB,
     tracked: process.env.N1_TRACKED,
+    vaktir: bundledVaktir.teams || bundledVaktir,
   });
   CACHE = { t: Date.now(), data };
   return data;
@@ -25,6 +27,7 @@ async function getData() {
 export default async function handler(req, res) {
   const url = new URL(req.url, "http://x");
   const slug = (url.searchParams.get("team") || "").toLowerCase();
+  const kind = (url.searchParams.get("kind") || "leikir").toLowerCase(); // leikir | vaktir
   const download = url.searchParams.get("download");
   if (!slug) return res.status(400).json({ error: "missing ?team=<slug>" });
 
@@ -44,11 +47,11 @@ export default async function handler(req, res) {
     location: data.meta.location,
     publicHost: req.headers.host || "www.lettfeti.com",
   };
-  const ics = buildICS(team, meta);
+  const ics = kind === "vaktir" ? buildVaktirICS(team, meta) : buildICS(team, meta);
 
   res.setHeader("Content-Type", "text/calendar; charset=utf-8");
   res.setHeader("Cache-Control", "public, s-maxage=300, stale-while-revalidate=3600");
   if (download)
-    res.setHeader("Content-Disposition", `attachment; filename="n1-${slug}.ics"`);
+    res.setHeader("Content-Disposition", `attachment; filename="n1-${slug}-${kind}.ics"`);
   return res.status(200).send(ics);
 }

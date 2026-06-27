@@ -1,49 +1,43 @@
 // Vercel Function — live torneopal data for the /n1 tracker.
 // Runs the same server-side scrape (cookie challenge included) and returns the
-// JSON the static app consumes. Cached at the edge so a burst of parents on
-// match day doesn't hammer torneopal: fresh for `s-maxage`, served stale while
-// revalidating. The static app falls back to the bundled snapshot if this 500s.
-//
-// Optional rosters: set the ROSTERS env var to a JSON string ({ "Team": [..] }).
+// JSON the static app consumes. On MATCH DAYS results matter most, so caching is
+// tight (~40s edge, ~25s in-instance) — torneopal score changes surface within
+// ~1 min. Off days it caches longer to spare torneopal. Served stale on error,
+// and the static app falls back to the bundled snapshot if this hard-fails.
 import { scrape } from "../lib/torneopal.mjs";
-import bundledRosters from "../lib/rosters.mjs";
+import bundledVaktir from "../lib/vaktir.mjs";
 
 export const config = { maxDuration: 30 };
 
 let CACHE = null; // warm in-instance cache (Fluid Compute reuses instances)
 
-function parseRosters() {
-  // Env override wins (set ROSTERS on Vercel to update without a redeploy);
-  // otherwise use the rosters bundled into the deployment.
-  try {
-    const e = JSON.parse(process.env.ROSTERS || "null");
-    if (e && Object.keys(e).length) return e.teams || e;
-  } catch {
-    /* fall through to bundled */
-  }
-  return bundledRosters.teams || bundledRosters;
+// Tighter when a tournament day is in progress (updateIntervalMin is 5 on match
+// days, 60 otherwise — derived from the fixtures in lib/torneopal.mjs).
+function freshness(data) {
+  const matchDay = (data?.meta?.updateIntervalMin ?? 60) <= 10;
+  return { memTtl: matchDay ? 25_000 : 90_000, sMax: matchDay ? 40 : 600 };
 }
 
 export default async function handler(req, res) {
   const now = Date.now();
-  // serve in-memory cache for 60s to cut latency on reused instances
-  if (CACHE && now - CACHE.t < 60_000) {
-    res.setHeader("x-cache", "hot");
-    res.setHeader("Cache-Control", "public, s-maxage=60, stale-while-revalidate=600");
-    return res.status(200).json(CACHE.data);
+  if (CACHE) {
+    const { memTtl, sMax } = freshness(CACHE.data);
+    if (now - CACHE.t < memTtl) {
+      res.setHeader("x-cache", "hot");
+      res.setHeader("Cache-Control", `public, s-maxage=${sMax}, stale-while-revalidate=900`);
+      return res.status(200).json(CACHE.data);
+    }
   }
   try {
     const data = await scrape({
       turnaus: process.env.N1_TURNAUS,
       club: process.env.N1_CLUB,
       tracked: process.env.N1_TRACKED,
-      rosters: parseRosters(),
+      vaktir: bundledVaktir.teams || bundledVaktir,
     });
     CACHE = { t: now, data };
     res.setHeader("x-cache", "miss");
-    // match-day vs off-day cadence comes from the data itself
-    const s = Math.max(30, Math.round((data.meta.updateIntervalMin * 60) / 2));
-    res.setHeader("Cache-Control", `public, s-maxage=${s}, stale-while-revalidate=900`);
+    res.setHeader("Cache-Control", `public, s-maxage=${freshness(data).sMax}, stale-while-revalidate=900`);
     return res.status(200).json(data);
   } catch (e) {
     if (CACHE) {
