@@ -6,8 +6,8 @@
     "turnaus": "320_0013",
     "club": "Breiðablik",
     "tracked": "Breiðablik Kristófer Ingi",
-    "generatedAt": "2026-06-27T16:59:33.268Z",
-    "nextUpdate": "2026-06-27T17:59:33.268Z",
+    "generatedAt": "2026-06-27T18:24:41.878Z",
+    "nextUpdate": "2026-06-27T19:24:41.878Z",
     "updateIntervalMin": 60,
     "seriesCount": 6,
     "teamCount": 180,
@@ -7081,35 +7081,15 @@
       "isTracked": true,
       "slug": "kristofer-ingi",
       "roster": [
-        {
-          "name": "Bæron Beitisson"
-        },
-        {
-          "name": "Bjarki Svanur Magnússon"
-        },
-        {
-          "name": "Brynjar Freyr Garðarsson"
-        },
-        {
-          "name": "Guðbjörn Snorri Tómasson"
-        },
-        {
-          "name": "Henry Þór Don Kjartansson"
-        },
-        {
-          "name": "Hjörleifur Brynjólfsson"
-        },
-        {
-          "name": "Hugi Hönnuson",
-          "guess": true
-        },
-        {
-          "name": "Óskar Tryggvason",
-          "guess": true
-        },
-        {
-          "name": "Tómas Ingi Björnsson"
-        }
+        "Bæron Beitisson",
+        "Bjarki Svanur Magnússon",
+        "Brynjar Freyr Garðarsson",
+        "Guðbjörn Snorri Tómasson",
+        "Henry Þór Don Kjartansson",
+        "Hjörleifur Brynjólfsson",
+        "Hugi Hönnuson",
+        "Óskar Tryggvason",
+        "Tómas Ingi Björnsson"
       ],
       "fixtures": [
         {
