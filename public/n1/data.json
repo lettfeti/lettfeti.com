@@ -6,8 +6,8 @@
     "turnaus": "320_0013",
     "club": "Breiðablik",
     "tracked": "Breiðablik Kristófer Ingi",
-    "generatedAt": "2026-06-27T16:43:41.294Z",
-    "nextUpdate": "2026-06-27T17:43:41.294Z",
+    "generatedAt": "2026-06-27T16:59:33.268Z",
+    "nextUpdate": "2026-06-27T17:59:33.268Z",
     "updateIntervalMin": 60,
     "seriesCount": 6,
     "teamCount": 180,
@@ -2894,7 +2894,40 @@
       "advance": 2,
       "isClub": true,
       "isTracked": false,
-      "roster": null,
+      "slug": "agust-orri",
+      "roster": [
+        {
+          "name": "Andri Hrafn Helgason"
+        },
+        {
+          "name": "Daníel Logi Jósefsson",
+          "guess": true
+        },
+        {
+          "name": "Gunnar Helgi Arnþórsson",
+          "guess": true
+        },
+        {
+          "name": "Ingvi Þór Kristinsson Eyland"
+        },
+        {
+          "name": "Kári Ólafsson Long"
+        },
+        {
+          "name": "Kristian Þór Sveinsson"
+        },
+        {
+          "name": "Markús Már Nardeau",
+          "guess": true
+        },
+        {
+          "name": "Sigurður Frosti Guðlaugsson",
+          "guess": true
+        },
+        {
+          "name": "Tómas Kári Ævarsson"
+        }
+      ],
       "fixtures": [
         {
           "id": "1688754",
@@ -2992,7 +3025,30 @@
       "advance": 2,
       "isClub": true,
       "isTracked": false,
-      "roster": null,
+      "slug": "viktor-karl",
+      "roster": [
+        {
+          "name": "Aron Gauti Friðriksson"
+        },
+        {
+          "name": "Atli Freyr Árnason"
+        },
+        {
+          "name": "Bergvin Rúnar Tryggvason"
+        },
+        {
+          "name": "Einar Orri Einarsson"
+        },
+        {
+          "name": "Haraldur Snær Einarsson"
+        },
+        {
+          "name": "Kolbeinn Þorbjarnarson"
+        },
+        {
+          "name": "Kristófer Máni Kristófersson"
+        }
+      ],
       "fixtures": [
         {
           "id": "1688785",
@@ -3090,7 +3146,33 @@
       "advance": 2,
       "isClub": true,
       "isTracked": false,
-      "roster": null,
+      "slug": "kristinn-steindors",
+      "roster": [
+        {
+          "name": "Ari Már Björnsson"
+        },
+        {
+          "name": "Aron Francesco Ásmundsson"
+        },
+        {
+          "name": "Ísak Einar Helgason"
+        },
+        {
+          "name": "Jón Þór Ingólfsson"
+        },
+        {
+          "name": "Lúkas Þór Ívarsson"
+        },
+        {
+          "name": "Örvar Atli Birkisson"
+        },
+        {
+          "name": "Stefán Orri Reynisson"
+        },
+        {
+          "name": "Þorsteinn Darri Bergþórsson"
+        }
+      ],
       "fixtures": [
         {
           "id": "1688778",
@@ -4273,7 +4355,28 @@
       "advance": 2,
       "isClub": true,
       "isTracked": false,
-      "roster": null,
+      "slug": "anton-logi",
+      "roster": [
+        {
+          "name": "Fannar Frosti Gíslason"
+        },
+        {
+          "name": "Logi Snær Magnússon"
+        },
+        {
+          "name": "Marel Birgisson"
+        },
+        {
+          "name": "Markús Darri Andrason",
+          "guess": true
+        },
+        {
+          "name": "Nökkvi Leó Adamsson"
+        },
+        {
+          "name": "Oliver Bocanegra Nowak"
+        }
+      ],
       "fixtures": [
         {
           "id": "1688883",
@@ -4371,7 +4474,31 @@
       "advance": 2,
       "isClub": true,
       "isTracked": false,
-      "roster": null,
+      "slug": "asgeir-helgi",
+      "roster": [
+        {
+          "name": "Adam Kári Davíðsson"
+        },
+        {
+          "name": "Alexander Hrafn Kristinsson"
+        },
+        {
+          "name": "Antoni Ben Powichrowski"
+        },
+        {
+          "name": "Björn Kári Valsson"
+        },
+        {
+          "name": "David Vu"
+        },
+        {
+          "name": "Flóki Magnússon"
+        },
+        {
+          "name": "Hugi Helgason",
+          "guess": true
+        }
+      ],
       "fixtures": [
         {
           "id": "1688895",
@@ -4469,7 +4596,32 @@
       "advance": 2,
       "isClub": true,
       "isTracked": false,
-      "roster": null,
+      "slug": "kristinn-jons",
+      "roster": [
+        {
+          "name": "Baldur Breki Sveinsson"
+        },
+        {
+          "name": "Elís Bergmann Stefánsson"
+        },
+        {
+          "name": "Gunnar Logi Ásgrímsson",
+          "guess": true
+        },
+        {
+          "name": "Hinrik Nóel Njálsson"
+        },
+        {
+          "name": "Orri Andrason"
+        },
+        {
+          "name": "Óskar Guðmundur Jónasson",
+          "guess": true
+        },
+        {
+          "name": "Steinar Ingi Steinbergsson"
+        }
+      ],
       "fixtures": [
         {
           "id": "1688919",
@@ -5512,7 +5664,34 @@
       "advance": 2,
       "isClub": true,
       "isTracked": false,
-      "roster": null,
+      "slug": "anton-ari",
+      "roster": [
+        {
+          "name": "Arnar Bjarki Unnarsson"
+        },
+        {
+          "name": "Dagur Fannar Magnússon"
+        },
+        {
+          "name": "Darri Hjartarson",
+          "guess": true
+        },
+        {
+          "name": "Evert Marinó Evertsson"
+        },
+        {
+          "name": "Jón Bergur Einarsson"
+        },
+        {
+          "name": "Ómar Gylfi Hafliðason"
+        },
+        {
+          "name": "Skorri Hrafn Pétursson"
+        },
+        {
+          "name": "Þór Hechmann Emilsson"
+        }
+      ],
       "fixtures": [
         {
           "id": "1689040",
@@ -5610,7 +5789,25 @@
       "advance": 2,
       "isClub": true,
       "isTracked": false,
-      "roster": null,
+      "slug": "ivar-orn",
+      "roster": [
+        {
+          "name": "Adrian Leó Madrid",
+          "guess": true
+        },
+        {
+          "name": "Anton Þór Sævarsson"
+        },
+        {
+          "name": "Aron Elí Bjarnason"
+        },
+        {
+          "name": "Erik Kristján Espel"
+        },
+        {
+          "name": "Hrafnkell Hersir Pétursson"
+        }
+      ],
       "fixtures": [
         {
           "id": "1689010",
@@ -6758,7 +6955,33 @@
       "advance": 2,
       "isClub": true,
       "isTracked": false,
-      "roster": null,
+      "slug": "valgeir-valgeirs",
+      "roster": [
+        {
+          "name": "Andri Dór Pétursson"
+        },
+        {
+          "name": "Ari Þormar Atlason"
+        },
+        {
+          "name": "Emil Örn Stefánsson"
+        },
+        {
+          "name": "Kristinn Haukur Lynge Fjóluson"
+        },
+        {
+          "name": "Kristófer Breki Magnason"
+        },
+        {
+          "name": "Kristófer Darri L. Hauksson"
+        },
+        {
+          "name": "Liam Nam Tran"
+        },
+        {
+          "name": "Sigursteinn Atli Einarsson"
+        }
+      ],
       "fixtures": [
         {
           "id": "1689116",
@@ -6856,7 +7079,38 @@
       "advance": 2,
       "isClub": true,
       "isTracked": true,
-      "roster": null,
+      "slug": "kristofer-ingi",
+      "roster": [
+        {
+          "name": "Bæron Beitisson"
+        },
+        {
+          "name": "Bjarki Svanur Magnússon"
+        },
+        {
+          "name": "Brynjar Freyr Garðarsson"
+        },
+        {
+          "name": "Guðbjörn Snorri Tómasson"
+        },
+        {
+          "name": "Henry Þór Don Kjartansson"
+        },
+        {
+          "name": "Hjörleifur Brynjólfsson"
+        },
+        {
+          "name": "Hugi Hönnuson",
+          "guess": true
+        },
+        {
+          "name": "Óskar Tryggvason",
+          "guess": true
+        },
+        {
+          "name": "Tómas Ingi Björnsson"
+        }
+      ],
       "fixtures": [
         {
           "id": "1689138",
@@ -6954,7 +7208,29 @@
       "advance": 2,
       "isClub": true,
       "isTracked": false,
-      "roster": null,
+      "slug": "hoskuldur",
+      "roster": [
+        {
+          "name": "Andri Þór Arnarsson"
+        },
+        {
+          "name": "Aron Darri Ottesen Þórhallsson",
+          "guess": true
+        },
+        {
+          "name": "Eðvald Atli Ragnarsson",
+          "guess": true
+        },
+        {
+          "name": "Jón Daníel Grímsson"
+        },
+        {
+          "name": "Kristófer Atli Baldvinsson"
+        },
+        {
+          "name": "Viggó Orri Ottesen Þórhallsson"
+        }
+      ],
       "fixtures": [
         {
           "id": "1689162",
@@ -8102,7 +8378,27 @@
       "advance": 2,
       "isClub": true,
       "isTracked": false,
-      "roster": null,
+      "slug": "oli-valur",
+      "roster": [
+        {
+          "name": "Arnór Bjarki Daðason"
+        },
+        {
+          "name": "Bjarki Steinar Guðmundsson"
+        },
+        {
+          "name": "Eiður Elí Auðunsson"
+        },
+        {
+          "name": "Eliot Atli Martel"
+        },
+        {
+          "name": "Hákon Máni Gunnarsson"
+        },
+        {
+          "name": "Óskar Árni Sigursveinsson"
+        }
+      ],
       "fixtures": [
         {
           "id": "1689294",
@@ -8200,7 +8496,27 @@
       "advance": 2,
       "isClub": true,
       "isTracked": false,
-      "roster": null,
+      "slug": "david-ingvars",
+      "roster": [
+        {
+          "name": "Árni Valur Óskarsson"
+        },
+        {
+          "name": "Bjarki Þór Brynjarsson"
+        },
+        {
+          "name": "Gylfi Freyr Hafþórsson"
+        },
+        {
+          "name": "Hugo Bergmann Benediktsson"
+        },
+        {
+          "name": "Ívar Orri Jóhannsson"
+        },
+        {
+          "name": "Lúkas Atli Erlingsson"
+        }
+      ],
       "fixtures": [
         {
           "id": "1689264",
@@ -8298,7 +8614,24 @@
       "advance": 2,
       "isClub": true,
       "isTracked": false,
-      "roster": null,
+      "slug": "andri-yeoman",
+      "roster": [
+        {
+          "name": "Alexander Smári Davíðsson"
+        },
+        {
+          "name": "Benjamín Hrafn Bjarnason"
+        },
+        {
+          "name": "Emil Ólafsson"
+        },
+        {
+          "name": "Jóhannes Hrafn Michaelsson"
+        },
+        {
+          "name": "Vilhjálmur Sveinn N. Hilmarsson"
+        }
+      ],
       "fixtures": [
         {
           "id": "1689276",
@@ -9376,7 +9709,17 @@
       "advance": 2,
       "isClub": true,
       "isTracked": false,
-      "roster": null,
+      "slug": "arnor-gauti",
+      "roster": [
+        {
+          "name": "Daníel Þór Sch. Björgvinsson",
+          "guess": true
+        },
+        {
+          "name": "Darri Vilhelmsson",
+          "guess": true
+        }
+      ],
       "fixtures": [
         {
           "id": "1690132",
@@ -9489,7 +9832,22 @@
       "advance": 2,
       "isClub": true,
       "isTracked": false,
-      "roster": null,
+      "slug": "viktor-orn",
+      "roster": [
+        {
+          "name": "Daníel Ingi Arnarsson"
+        },
+        {
+          "name": "Gabríel Þór Bjarkason"
+        },
+        {
+          "name": "Gunnar Logi Sigurvinsson",
+          "guess": true
+        },
+        {
+          "name": "Kristján Orri Ólafsson"
+        }
+      ],
       "fixtures": [
         {
           "id": "1690162",

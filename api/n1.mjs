@@ -6,17 +6,22 @@
 //
 // Optional rosters: set the ROSTERS env var to a JSON string ({ "Team": [..] }).
 import { scrape } from "../lib/torneopal.mjs";
+import bundledRosters from "../lib/rosters.mjs";
 
 export const config = { maxDuration: 30 };
 
 let CACHE = null; // warm in-instance cache (Fluid Compute reuses instances)
 
 function parseRosters() {
+  // Env override wins (set ROSTERS on Vercel to update without a redeploy);
+  // otherwise use the rosters bundled into the deployment.
   try {
-    return JSON.parse(process.env.ROSTERS || "{}");
+    const e = JSON.parse(process.env.ROSTERS || "null");
+    if (e && Object.keys(e).length) return e.teams || e;
   } catch {
-    return {};
+    /* fall through to bundled */
   }
+  return bundledRosters.teams || bundledRosters;
 }
 
 export default async function handler(req, res) {
