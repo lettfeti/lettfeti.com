@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="is">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>N1 mótið · Breiðablik</title>
+<meta name="description" content="Fylgstu með Breiðabliksliðunum á N1 mótinu í Akureyri — staða, leikir, vellir og spá um framhaldið." />
+<meta name="theme-color" content="#2d9cdb" />
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%232d9cdb'/%3E%3Ctext x='16' y='22' font-size='16' text-anchor='middle' fill='white' font-family='sans-serif' font-weight='700'%3EN1%3C/text%3E%3C/svg%3E" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<style>
+  /* ---- wc26 glacier palette ---- */
+  :root {
+    --background: #eef7fc;      /* Ice Mist */
+    --surface: #ffffff;
+    --surface-2: #eaf4fb;
+    --border: #d3e6f2;
+    --foreground: #15324f;
+    --muted: #5e7a92;
+    --accent: #2d9cdb;          /* Glacier Blue */
+    --accent-d: #2484bd;
+    --navy: #1e4e8c;            /* Icelandic Navy */
+    --purple: #7b61ff;          /* Lupine Purple */
+    --success: #67c587;         /* Moss Green */
+    --danger: #d65f5f;          /* Ember Red */
+    --warn: #e9a23b;
+    --radius: 1rem;
+    --shadow: 0 1px 2px rgba(30,78,140,.05), 0 6px 20px rgba(30,78,140,.05);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    font-family: "Outfit", system-ui, sans-serif;
+    color: var(--foreground);
+    background:
+      radial-gradient(1100px 560px at 50% -10%, #dceefa 0%, transparent 60%),
+      var(--background);
+    min-height: 100vh;
+    line-height: 1.5;
+    padding-bottom: 3rem;
+  }
+  a { color: inherit; }
+  .wrap { max-width: 680px; margin: 0 auto; padding: 0 1rem; }
+
+  /* ---- header ---- */
+  header.top {
+    position: sticky; top: 0; z-index: 20;
+    background: rgba(238,247,252,.82);
+    backdrop-filter: saturate(180%) blur(12px);
+    border-bottom: 1px solid var(--border);
+  }
+  .top-row { display: flex; align-items: center; gap: .6rem; padding: .7rem 0; }
+  .brand { display: flex; align-items: center; gap: .55rem; font-weight: 800; letter-spacing: -.01em; }
+  .brand .mark {
+    width: 30px; height: 30px; border-radius: 8px; flex: 0 0 auto;
+    background: linear-gradient(135deg, var(--accent), var(--navy));
+    color: #fff; display: grid; place-items: center; font-size: .85rem; font-weight: 800;
+  }
+  .brand small { display: block; font-weight: 500; font-size: .7rem; color: var(--muted); letter-spacing: 0; }
+  .spacer { flex: 1; }
+  .updbox { text-align: right; font-size: .68rem; color: var(--muted); line-height: 1.35; white-space: nowrap; }
+  .updbox b { color: var(--navy); font-weight: 700; }
+  .updbox .dot { display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: var(--success); margin-right: 3px; vertical-align: middle; animation: pulse 2s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.35} }
+
+  /* team switcher */
+  .switch { display: flex; align-items: center; gap: .5rem; padding-bottom: .7rem; }
+  select.teamsel {
+    -webkit-appearance: none; appearance: none;
+    font: inherit; font-weight: 700; color: var(--navy);
+    background: var(--surface) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='none' stroke='%235e7a92' stroke-width='2'%3E%3Cpath d='M4 6l4 4 4-4'/%3E%3C/svg%3E") no-repeat right .75rem center;
+    border: 1px solid var(--border); border-radius: 12px;
+    padding: .6rem 2.2rem .6rem .85rem; width: 100%; cursor: pointer;
+    box-shadow: var(--shadow);
+  }
+  select.teamsel:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
+
+  /* ---- tabs (vaktir) ---- */
+  nav.tabs { display: flex; gap: .25rem; margin: .1rem 0 1rem; background: var(--surface-2); border: 1px solid var(--border); border-radius: 14px; padding: .25rem; }
+  nav.tabs button {
+    flex: 1; font: inherit; font-weight: 600; font-size: .82rem; color: var(--muted);
+    background: transparent; border: 0; border-radius: 10px; padding: .55rem .3rem; cursor: pointer;
+    transition: all .15s; white-space: nowrap;
+  }
+  nav.tabs button[aria-selected="true"] { background: var(--surface); color: var(--navy); box-shadow: var(--shadow); }
+
+  /* ---- cards & bits ---- */
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow); padding: 1.1rem; margin-bottom: .9rem; }
+  .card h2 { font-size: .8rem; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); margin-bottom: .7rem; font-weight: 700; }
+  .pill { display: inline-flex; align-items: center; gap: .35rem; border-radius: 999px; padding: .25rem .65rem; font-size: .72rem; font-weight: 700; background: var(--surface-2); border: 1px solid var(--border); color: var(--navy); }
+  .pill.win { background: #e7f7ed; border-color: #bfe8cd; color: #2c8a4f; }
+  .pill.live { background: #fff3e0; border-color: #f6dcae; color: #b9772a; }
+  .pill.out { background: #fbe9e9; border-color: #f1c8c8; color: #b54545; }
+  .pill.idle { background: var(--surface-2); color: var(--muted); }
+  .muted { color: var(--muted); }
+  .row { display: flex; align-items: center; gap: .6rem; }
+
+  /* hero */
+  .hero { background: linear-gradient(135deg, var(--navy), var(--accent)); color: #fff; border: 0; }
+  .hero h1 { font-size: 1.45rem; font-weight: 800; letter-spacing: -.02em; line-height: 1.15; }
+  .hero .sub { color: #d7ecfb; font-size: .85rem; font-weight: 500; margin-top: .15rem; }
+  .hero .statusline { margin-top: .75rem; }
+  .hero .pill { background: rgba(255,255,255,.16); border-color: rgba(255,255,255,.28); color: #fff; backdrop-filter: blur(4px); }
+
+  /* countdown */
+  .cd { display: flex; gap: .4rem; margin-top: .85rem; }
+  .cd .u { background: rgba(255,255,255,.14); border: 1px solid rgba(255,255,255,.22); border-radius: 12px; padding: .5rem .2rem; text-align: center; flex: 1; }
+  .cd .u b { display: block; font-size: 1.5rem; font-weight: 800; font-variant-numeric: tabular-nums; line-height: 1; }
+  .cd .u span { font-size: .6rem; text-transform: uppercase; letter-spacing: .06em; color: #cfe6f8; }
+
+  /* match list */
+  .match { display: flex; align-items: center; gap: .7rem; padding: .7rem 0; border-top: 1px solid var(--border); }
+  .match:first-child { border-top: 0; }
+  .match .when { width: 56px; flex: 0 0 auto; text-align: center; }
+  .match .when .t { font-weight: 800; font-size: 1rem; font-variant-numeric: tabular-nums; }
+  .match .when .d { font-size: .62rem; color: var(--muted); text-transform: uppercase; }
+  .match .mid { flex: 1; min-width: 0; }
+  .match .opp { font-weight: 700; }
+  .match .meta { font-size: .73rem; color: var(--muted); display: flex; gap: .5rem; flex-wrap: wrap; }
+  .ha { font-size: .6rem; font-weight: 800; border-radius: 5px; padding: .05rem .3rem; }
+  .ha.h { background: #e7f0fb; color: var(--navy); }
+  .ha.a { background: #f2eefd; color: var(--purple); }
+  .res { font-weight: 800; font-variant-numeric: tabular-nums; font-size: 1rem; }
+  .res.w { color: var(--success); } .res.l { color: var(--danger); } .res.d { color: var(--muted); }
+
+  /* table */
+  table { width: 100%; border-collapse: collapse; font-size: .85rem; }
+  th, td { padding: .5rem .35rem; text-align: center; }
+  th { font-size: .65rem; text-transform: uppercase; letter-spacing: .03em; color: var(--muted); font-weight: 700; border-bottom: 1px solid var(--border); }
+  td.team { text-align: left; font-weight: 600; }
+  tr.me td { background: #eaf4fb; }
+  tr.me td.team { color: var(--navy); font-weight: 800; }
+  tr.club td.team::after { content: "★"; color: var(--accent); font-size: .7rem; margin-left: .25rem; }
+  .pos { display: inline-grid; place-items: center; width: 20px; height: 20px; border-radius: 6px; font-size: .72rem; font-weight: 800; }
+  .qline td { border-bottom: 2px dashed var(--accent); }
+  .cut-label { font-size: .62rem; color: var(--accent); font-weight: 700; padding: .25rem 0; text-align: left; }
+
+  /* ladder (projection) */
+  .ladder { display: flex; flex-direction: column; gap: .3rem; }
+  .rung { display: flex; align-items: center; gap: .6rem; padding: .5rem .65rem; border-radius: 10px; border: 1px solid var(--border); background: var(--surface-2); font-size: .82rem; }
+  .rung .n { width: 22px; height: 22px; border-radius: 6px; display: grid; place-items: center; font-weight: 800; font-size: .75rem; background: #fff; border: 1px solid var(--border); }
+  .rung.reach { background: #eaf4fb; border-color: #bcdcf2; }
+  .rung.qual { box-shadow: inset 3px 0 0 var(--success); }
+  .rung.target { background: linear-gradient(135deg, #e7f0fb, #f2eefd); border-color: var(--accent); font-weight: 700; }
+  .rung .tag { margin-left: auto; font-size: .66rem; font-weight: 700; color: var(--muted); }
+
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: .6rem; }
+  .stat { background: var(--surface-2); border: 1px solid var(--border); border-radius: 12px; padding: .7rem; text-align: center; }
+  .stat b { display: block; font-size: 1.5rem; font-weight: 800; color: var(--navy); line-height: 1; }
+  .stat span { font-size: .66rem; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); }
+
+  .squad { display: flex; align-items: center; gap: .65rem; padding: .65rem 0; border-top: 1px solid var(--border); cursor: pointer; }
+  .squad:first-child { border-top: 0; }
+  .squad .nm { font-weight: 700; flex: 1; min-width: 0; }
+  .squad .nm small { display: block; font-weight: 500; font-size: .72rem; color: var(--muted); }
+  .chev { color: var(--muted); }
+
+  .note { font-size: .76rem; color: var(--muted); background: var(--surface-2); border: 1px dashed var(--border); border-radius: 10px; padding: .6rem .75rem; margin-top: .5rem; }
+  .center { text-align: center; }
+  .loading { text-align: center; padding: 4rem 1rem; color: var(--muted); }
+  footer { text-align: center; font-size: .7rem; color: var(--muted); padding: 1.5rem 1rem .5rem; }
+  footer a { color: var(--accent); text-decoration: none; }
+  .hidden { display: none !important; }
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="wrap">
+    <div class="top-row">
+      <div class="brand">
+        <span class="mark">N1</span>
+        <div>N1 mótið<small>Akureyri · Breiðablik</small></div>
+      </div>
+      <div class="spacer"></div>
+      <div class="updbox" id="updbox"></div>
+    </div>
+    <div class="switch">
+      <select class="teamsel" id="teamsel" aria-label="Veldu lið"></select>
+    </div>
+    <nav class="tabs" id="tabs" role="tablist">
+      <button role="tab" data-tab="lid" aria-selected="true">Liðið</button>
+      <button role="tab" data-tab="stada" aria-selected="false">Staðan</button>
+      <button role="tab" data-tab="spa" aria-selected="false">Spá</button>
+      <button role="tab" data-tab="blik" aria-selected="false">Breiðablik</button>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap" id="main">
+  <div class="loading" id="loading">Sæki gögn…</div>
+  <div id="view" class="hidden"></div>
+</main>
+
+<footer>
+  Óopinber síða fyrir foreldra · gögn frá <a href="https://n1motid.torneopal.com" target="_blank" rel="noopener">torneopal</a><br/>
+  <span id="genline"></span>
+</footer>
+
+<script>
+const ICE_DAYS = ["Sun","Mán","Þri","Mið","Fim","Fös","Lau"];
+const MONTHS = ["jan","feb","mar","apr","maí","jún","júl","ágú","sep","okt","nóv","des"];
+let DATA = null, SELECTED = null, TAB = "lid";
+
+const $ = (s, r=document) => r.querySelector(s);
+const el = (tag, cls, html) => { const e=document.createElement(tag); if(cls)e.className=cls; if(html!=null)e.innerHTML=html; return e; };
+const esc = (s) => String(s==null?"":s).replace(/[&<>"]/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+// Iceland is UTC+0 year-round (no DST) — a fixture at "2026-07-01" "16:30" is 16:30Z.
+function matchDate(m){ if(!m||!m.date||!m.time) return null; return new Date(`${m.date}T${m.time}:00Z`); }
+function fmtDateLabel(iso){ const d=new Date(iso+"T12:00:00Z"); return `${ICE_DAYS[d.getUTCDay()]} ${d.getUTCDate()}. ${MONTHS[d.getUTCMonth()]}`; }
+
+function diffParts(ms){
+  const s=Math.max(0,Math.floor(ms/1000));
+  return { d:Math.floor(s/86400), h:Math.floor(s%86400/3600), m:Math.floor(s%3600/60), s:s%60 };
+}
+function relIs(ms){
+  const past = ms<0; const a=Math.abs(ms); const m=Math.round(a/60000);
+  if(m<1) return past?"rétt í þessu":"innan mínútu";
+  if(m<60) return (past?"fyrir ":"eftir ")+m+" mín";
+  const h=Math.round(m/60); if(h<24) return (past?"fyrir ":"eftir ")+h+" klst";
+  const d=Math.round(h/24); return (past?"fyrir ":"eftir ")+d+" d";
+}
+
+async function fetchData(){
+  // Prefer the live serverless function; fall back to the bundled snapshot so
+  // the page always renders even if the function is cold/erroring or we're
+  // running as a plain static drop-in.
+  // /api/n1 = live function; the others are the bundled snapshot fallback.
+  // Both absolute (canonical /n1 URL) and relative (local `python -m http.server`
+  // inside public/n1) are tried so it works in every context.
+  const bust = "?t="+Date.now();
+  const sources = ["/api/n1", "/n1/data.json"+bust, "./data.json"+bust];
+  for(const url of sources){
+    try{
+      const r = await fetch(url, {cache:"no-store"});
+      if(!r.ok) continue;
+      const d = await r.json();
+      if(d && d.meta && d.teams) return d;
+    }catch(e){ /* try next */ }
+  }
+  throw new Error("no data source");
+}
+async function load(){
+  try{
+    DATA = await fetchData();
+    buildSwitcher();
+    if(!SELECTED){
+      const tracked = Object.values(DATA.teams).find(t=>t.isTracked);
+      SELECTED = tracked ? tracked.teamId : (DATA.clubTeams[0]||null);
+    }
+    $("#loading").classList.add("hidden");
+    $("#view").classList.remove("hidden");
+    render();
+  }catch(e){
+    $("#loading").textContent = "Gat ekki sótt gögn. Reyndu aftur." ;
+  }
+}
+
+function clubTeamObjs(){
+  return DATA.clubTeams.map(id=>DATA.teams[id]).filter(Boolean);
+}
+function buildSwitcher(){
+  const sel=$("#teamsel"); sel.innerHTML="";
+  for(const t of clubTeamObjs()){
+    const o=el("option"); o.value=t.teamId;
+    o.textContent = t.name.replace(/^Breiðablik\s*/,"Breiðablik ") + " — " + t.seriesName.replace("Forkeppni ","fl. ");
+    sel.appendChild(o);
+  }
+  sel.value = SELECTED || "";
+  sel.onchange = ()=>{ SELECTED=sel.value; render(); };
+}
+
+function tone(p){ return p ? p.tone : "idle"; }
+
+/* ---------- TABS ---------- */
+$("#tabs").addEventListener("click", e=>{
+  const b=e.target.closest("button[data-tab]"); if(!b) return;
+  TAB=b.dataset.tab;
+  [...$("#tabs").children].forEach(x=>x.setAttribute("aria-selected", String(x===b)));
+  render();
+});
+
+function render(){
+  if(!DATA) return;
+  $("#teamsel").value = SELECTED;
+  const t = DATA.teams[SELECTED];
+  const v = $("#view"); v.innerHTML="";
+  if(!t){ v.appendChild(el("div","card","Lið fannst ekki.")); return; }
+  v.appendChild(hero(t));
+  if(TAB==="lid") renderLid(v,t);
+  else if(TAB==="stada") renderStada(v,t);
+  else if(TAB==="spa") renderSpa(v,t);
+  else if(TAB==="blik") renderBlik(v,t);
+  tickAll();
+}
+
+/* ---------- HERO ---------- */
+function hero(t){
+  const p=t.projection||{};
+  const c=el("div","card hero");
+  c.innerHTML = `
+    <div class="row">
+      <div style="flex:1;min-width:0">
+        <h1>${esc(t.name)}</h1>
+        <div class="sub">${esc(t.seriesName.replace("Forkeppni ","Styrkleikafl. "))} · Riðill ${esc(t.lohkoLabel)} · ${esc(DATA.meta.location)}</div>
+      </div>
+      <div style="text-align:center">
+        <div style="font-size:1.9rem;font-weight:800;line-height:1">${t.pos||"–"}.</div>
+        <div class="sub" style="font-size:.65rem;text-transform:uppercase;letter-spacing:.05em">sæti</div>
+      </div>
+    </div>
+    <div class="statusline"><span class="pill ${tone(p)}">${esc(p.status||"")}</span></div>
+    <div id="herocd"></div>`;
+  const nm=t.nextMatch;
+  if(nm){
+    const box=el("div"); box.id="herocd";
+    box.innerHTML = `<div class="sub" style="margin-top:.9rem;font-size:.72rem;text-transform:uppercase;letter-spacing:.05em">Næsti leikur · ${esc(nm.isHome?"heima gegn":"úti gegn")} ${esc(nm.opponent)}</div>
+      <div class="cd" data-cd="${nm.date}T${nm.time||"00:00"}">
+        <div class="u"><b data-u="d">–</b><span>dagar</span></div>
+        <div class="u"><b data-u="h">–</b><span>klst</span></div>
+        <div class="u"><b data-u="m">–</b><span>mín</span></div>
+        <div class="u"><b data-u="s">–</b><span>sek</span></div>
+      </div>
+      <div class="sub" style="margin-top:.5rem;font-size:.74rem">📍 ${esc(nm.venuePlace)} · ${esc(nm.time||"tími óstaðf.")} · ${esc(fmtDateLabel(nm.date))}</div>`;
+    c.querySelector("#herocd").replaceWith(box);
+  } else {
+    c.querySelector("#herocd").innerHTML = `<div class="sub" style="margin-top:.8rem">Engir fleiri leikir áætlaðir.</div>`;
+  }
+  return c;
+}
+
+/* ---------- LIÐIÐ ---------- */
+function renderLid(v,t){
+  const card=el("div","card"); card.appendChild(el("h2",null,"Leikir liðsins"));
+  const list=el("div");
+  (t.fixtures||[]).forEach(f=>list.appendChild(matchRow(t,f)));
+  if(!(t.fixtures||[]).length) list.appendChild(el("div","muted","Engir leikir skráðir enn."));
+  card.appendChild(list); v.appendChild(card);
+
+  if(t.roster && t.roster.length){
+    const rc=el("div","card"); rc.appendChild(el("h2",null,"Leikmenn"));
+    const wrap=el("div"); wrap.style.cssText="display:flex;flex-wrap:wrap;gap:.4rem";
+    t.roster.forEach(pl=>{ const name = typeof pl==="string"?pl:(pl.name||""); wrap.appendChild(el("span","pill",esc(name))); });
+    rc.appendChild(wrap); v.appendChild(rc);
+  } else {
+    v.appendChild(el("div","note","Leikmannalisti birtist hér þegar hann er klár."));
+  }
+}
+function matchRow(t,f){
+  const r=el("div","match");
+  let resHtml="";
+  if(f.played && f.score){
+    const [a,b]=f.score.split(/[-–]/).map(Number);
+    const gf=f.isHome?a:b, ga=f.isHome?b:a;
+    const cls=gf>ga?"w":gf<ga?"l":"d";
+    resHtml=`<div class="res ${cls}">${esc(f.score)}</div>`;
+  }
+  r.innerHTML = `
+    <div class="when">
+      <div class="t">${esc(f.played?"":(f.time||"–"))}</div>
+      <div class="d">${f.date?esc(fmtDateLabel(f.date).split(" ").slice(0,1)+" "+f.date.slice(8)):""}</div>
+    </div>
+    <div class="mid">
+      <div class="opp">${esc(f.opponent)} <span class="ha ${f.isHome?"h":"a"}">${f.isHome?"H":"Ú"}</span></div>
+      <div class="meta"><span>📍 ${esc(f.venuePlace||"–")}</span><span>Riðill ${esc(f.lohko||t.lohkoLabel)}</span>${f.played?"<span>Lokið</span>":""}</div>
+    </div>
+    ${resHtml}`;
+  return r;
+}
+
+/* ---------- STAÐAN ---------- */
+function groupOf(t){
+  const s=DATA.series.find(s=>s.code===t.series);
+  return s ? s.groups.find(g=>g.lohko===t.lohko) : null;
+}
+function renderStada(v,t){
+  const g=groupOf(t);
+  const card=el("div","card");
+  card.appendChild(el("h2",null,`Riðill ${esc(t.lohkoLabel)} · ${esc(t.seriesName)}`));
+  if(!g){ card.appendChild(el("div","muted","Engin tafla.")); v.appendChild(card); return; }
+  const tbl=el("table");
+  tbl.innerHTML=`<thead><tr><th></th><th class="team" style="text-align:left">Lið</th><th>L</th><th>U</th><th>J</th><th>T</th><th>MM</th><th>Stig</th></tr></thead>`;
+  const tb=el("tbody");
+  g.rows.forEach((r,i)=>{
+    const tr=el("tr");
+    const me = r.teamId===t.teamId;
+    const club = r.name.startsWith(DATA.meta.club);
+    tr.className = (me?"me ":"")+(club&&!me?"club ":"")+(r.qualLine?"qline":"");
+    const posColor = r.pos<=t.advance ? "background:#e7f7ed;color:#2c8a4f" : "background:var(--surface-2);color:var(--muted)";
+    tr.innerHTML=`<td><span class="pos" style="${posColor}">${r.pos}</span></td>
+      <td class="team">${esc(r.name)}</td>
+      <td>${r.played}</td><td>${r.won}</td><td>${r.drawn}</td><td>${r.lost}</td>
+      <td>${r.gf}-${r.ga}</td><td><b>${r.points}</b></td>`;
+    tb.appendChild(tr);
+    if(r.pos===t.advance){
+      const ctr=el("tr"); ctr.innerHTML=`<td colspan="8" class="cut-label">— efstu ${t.advance} komast áfram í úrslitakeppni —</td>`;
+      tb.appendChild(ctr);
+    }
+  });
+  tbl.appendChild(tb); card.appendChild(tbl);
+  card.appendChild(el("div","note","L=leikir, U=unnir, J=jafntefli, T=tapaðir, MM=mörk, Stig=stig. ★ = Breiðablikslið."));
+  v.appendChild(card);
+}
+
+/* ---------- SPÁ ---------- */
+function renderSpa(v,t){
+  const p=t.projection||{}; const g=groupOf(t);
+  const stats=el("div","card");
+  stats.appendChild(el("h2",null,"Staðan í hnotskurn"));
+  stats.appendChild(gridStats([
+    ["Sæti núna", (t.pos||"–")+"."],
+    ["Stig", t.points],
+    ["Leikir eftir", p.remaining!=null?p.remaining:"–"],
+    ["Möguleg stig", p.maxPts!=null?p.maxPts:"–"],
+  ]));
+  v.appendChild(stats);
+
+  // landing zone ladder
+  const card=el("div","card");
+  card.appendChild(el("h2",null,"Hvar getur liðið endað?"));
+  const best=p.bestPos, worst=p.worstPos, n=g?g.rows.length:4;
+  const ladder=el("div","ladder");
+  for(let pos=1; pos<=n; pos++){
+    const reach = best!=null && pos>=best && pos<=worst;
+    const qual = pos<=t.advance;
+    const target = pos===best;
+    const rung=el("div","rung"+(reach?" reach":"")+(qual?" qual":"")+(target?" target":""));
+    let tag = qual ? "úrslitakeppni" : "fellur úr";
+    if(reach && pos===best && pos===worst) tag="öruggt";
+    rung.innerHTML=`<span class="n">${pos}.</span> <span>${pos===1?"Riðilsmeistari":pos+". sæti"}</span><span class="tag">${reach?tag:"&nbsp;"}</span>`;
+    ladder.appendChild(rung);
+  }
+  card.appendChild(ladder);
+
+  let verdict;
+  if(!p.started) verdict = `Mótið er ekki hafið. Efstu <b>${t.advance}</b> liðin í riðlinum komast áfram í úrslitakeppni styrkleikaflokks. ${t.name.replace("Breiðablik ","")} spilar <b>${p.remaining}</b> leiki í riðlakeppninni.`;
+  else if(p.clinchedAdvance && p.bestPos===1 && p.worstPos===1) verdict = `Liðið er <b>öruggur riðilsmeistari</b> 🥇 og komið áfram í úrslitakeppni.`;
+  else if(p.clinchedAdvance) verdict = `Liðið er <b>komið áfram</b> í úrslitakeppni — sætið er tryggt ✅. Getur enn endað í ${p.bestPos}.–${p.worstPos}. sæti.`;
+  else if(p.eliminated) verdict = `Liðið kemst ekki áfram úr riðlinum að þessu sinni. Lokastaða verður ${p.bestPos}.–${p.worstPos}.`;
+  else verdict = `Allt opið: liðið getur endað í <b>${p.bestPos}.–${p.worstPos}.</b> sæti. Efstu ${t.advance} komast áfram, svo hver leikur skiptir máli.`;
+  card.appendChild(el("div","note",verdict));
+  v.appendChild(card);
+
+  // bracket note
+  v.appendChild(el("div","note","🔮 Úrslitakeppnin (A-/B-úrslit o.s.frv.) er dregin þegar riðlakeppni lýkur. Um leið og hún birtist í kerfinu uppfærist spáin sjálfkrafa með nákvæmri leið liðsins."));
+}
+function gridStats(items){
+  const g=el("div","grid2");
+  items.forEach(([label,val])=>{ const s=el("div","stat"); s.innerHTML=`<b>${esc(val)}</b><span>${esc(label)}</span>`; g.appendChild(s); });
+  return g;
+}
+
+/* ---------- BREIÐABLIK ---------- */
+function renderBlik(v,t){
+  const byDiv={};
+  clubTeamObjs().forEach(ct=>{ (byDiv[ct.seriesName]=byDiv[ct.seriesName]||[]).push(ct); });
+  const head=el("div","card");
+  head.innerHTML=`<h2>Öll Breiðabliksliðin</h2><div class="muted" style="font-size:.85rem">${DATA.meta.clubSquadCount} lið á mótinu, í ${Object.keys(byDiv).length} styrkleikaflokkum. Smelltu á lið til að skoða.</div>`;
+  v.appendChild(head);
+  Object.keys(byDiv).sort().forEach(div=>{
+    const card=el("div","card");
+    card.appendChild(el("h2",null,div.replace("Forkeppni ","Styrkleikaflokkur ")));
+    byDiv[div].forEach(ct=>{
+      const p=ct.projection||{};
+      const nm=ct.nextMatch;
+      const row=el("div","squad");
+      row.innerHTML=`
+        <span class="pill ${tone(p)}" style="flex:0 0 auto">${ct.pos||"–"}.</span>
+        <div class="nm">${esc(ct.name.replace("Breiðablik ",""))}
+          <small>Riðill ${esc(ct.lohkoLabel)} · ${nm?("næst "+esc(nm.time||"?")+" "+esc(fmtDateLabel(nm.date).split(" ")[0])):"engir leikir"}</small>
+        </div>
+        <span class="chev">›</span>`;
+      row.onclick=()=>{ SELECTED=ct.teamId; TAB="lid"; [...$("#tabs").children].forEach(x=>x.setAttribute("aria-selected",String(x.dataset.tab==="lid"))); render(); window.scrollTo({top:0,behavior:"smooth"}); };
+      card.appendChild(row);
+    });
+    v.appendChild(card);
+  });
+}
+
+/* ---------- TICKERS ---------- */
+function tickAll(){
+  // match countdowns
+  document.querySelectorAll("[data-cd]").forEach(cd=>{
+    const target=new Date(cd.dataset.cd+":00Z");
+    const ms=target-new Date();
+    const p=diffParts(ms);
+    const set=(u,val)=>{ const e=cd.querySelector(`[data-u="${u}"]`); if(e) e.textContent=String(val).padStart(2,"0"); };
+    if(ms<=0 && ms>-2*3600*1000){ set("d","00"); set("h","00"); set("m","00"); set("s","00"); }
+    else { set("d",p.d); set("h",p.h); set("m",p.m); set("s",p.s); }
+  });
+  // update box
+  updBox();
+}
+function updBox(){
+  if(!DATA) return;
+  const gen=new Date(DATA.meta.generatedAt);
+  const nxt=new Date(DATA.meta.nextUpdate);
+  const now=new Date();
+  const overdue = now>nxt;
+  $("#updbox").innerHTML =
+    `<div><span class="dot" style="background:${overdue?"var(--warn)":"var(--success)"}"></span>Uppfært <b>${relIs(gen-now)}</b></div>`+
+    `<div>Næsta uppfærsla ${overdue?"<b>væntanleg</b>":"<b>"+relIs(nxt-now)+"</b>"}</div>`;
+  $("#genline").textContent = `Síðast uppfært ${gen.toLocaleString("is-IS",{timeZone:"Atlantic/Reykjavik"})}`;
+}
+
+// auto re-fetch data periodically to pick up new deploys
+setInterval(()=>{ if(document.visibilityState==="visible") load(); }, 120000);
+setInterval(tickAll, 1000);
+load();
+</script>
+</body>
+</html>
