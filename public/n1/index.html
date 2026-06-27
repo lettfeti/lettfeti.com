@@ -105,6 +105,21 @@
   .calbtn.primary:active { background: var(--accent-d); }
   .calbtn.ghost { background: var(--surface); color: var(--navy); }
   .calbtn.ghost:active { border-color: var(--accent); }
+  /* vaktaplan shift list */
+  .vakt { display: flex; gap: .7rem; align-items: center; padding: .55rem 0; border-top: 1px solid var(--border); }
+  .vakt:first-child { border-top: 0; }
+  .vakt .vt { width: 92px; flex: 0 0 auto; text-align: center; font-size: .72rem; font-weight: 700; color: var(--navy); line-height: 1.25; }
+  .vakt .vmid { flex: 1; min-width: 0; }
+  .vakt .vpar { font-weight: 700; }
+  .vakt .vrole { font-size: .72rem; color: var(--muted); }
+  /* now / next strip */
+  .vaktnow { display: flex; flex-direction: column; gap: .55rem; }
+  .vaktnow > div { display: flex; align-items: center; gap: .55rem; }
+  .vaktnow .vlabel { font-size: .58rem; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); font-weight: 800; width: 78px; flex: 0 0 auto; }
+  .vaktnow .vwho { font-weight: 800; flex: 1; min-width: 0; }
+  .vaktnow .vmeta { font-size: .74rem; color: var(--muted); font-weight: 600; white-space: nowrap; }
+  .vaktnow .vnow { background: var(--tint-win); margin: -.3rem -.4rem; padding: .5rem .4rem; border-radius: 10px; }
+  .vaktnow .vnow .vwho { color: var(--success); }
 
   /* ---- tabs (vaktir) ---- */
   nav.tabs { display: flex; gap: .25rem; margin: .1rem 0 1rem; background: var(--surface-2); border: 1px solid var(--border); border-radius: 14px; padding: .25rem; }
@@ -431,31 +446,18 @@ function hero(t){
 
 /* ---------- LIÐIÐ ---------- */
 function renderLid(v,t){
+  const vn = vaktNowCard(t);
+  if(vn) v.appendChild(vn);
+
   const card=el("div","card"); card.appendChild(el("h2",null,"Leikir liðsins"));
   const list=el("div");
   (t.fixtures||[]).forEach(f=>list.appendChild(matchRow(t,f)));
   if(!(t.fixtures||[]).length) list.appendChild(el("div","muted","Engir leikir skráðir enn."));
   card.appendChild(list); v.appendChild(card);
 
-  v.appendChild(calendarCard(t));
-
-  if(t.roster && t.roster.length){
-    const rc=el("div","card");
-    rc.appendChild(el("h2",null,`Leikmenn · ${t.roster.length}`));
-    const wrap=el("div"); wrap.style.cssText="display:flex;flex-wrap:wrap;gap:.4rem";
-    let anyGuess=false;
-    t.roster.forEach(pl=>{
-      const name = typeof pl==="string"?pl:(pl.name||"");
-      const guess = typeof pl==="object" && pl.guess;
-      if(guess) anyGuess=true;
-      wrap.appendChild(el("span","pill", esc(name) + (guess?'<span class="ptag" title="ágiskun">⚠</span>':"")));
-    });
-    rc.appendChild(wrap);
-    if(anyGuess) rc.appendChild(el("div","note","⚠ = ágiskun um liðaskiptingu, óstaðfest."));
-    v.appendChild(rc);
-  } else {
-    v.appendChild(el("div","note","Leikmannalisti birtist hér þegar hann er klár."));
-  }
+  v.appendChild(leikdagatalCard(t));
+  const vp = vaktaplanCard(t);
+  if(vp) v.appendChild(vp);
 }
 function matchRow(t,f){
   const r=el("div","match");
@@ -479,22 +481,79 @@ function matchRow(t,f){
   return r;
 }
 
-/* ---------- CALENDAR ---------- */
-function calendarCard(t){
-  const c=el("div","card");
-  c.appendChild(el("h2",null,"Dagatal"));
+/* ---------- CALENDARS ---------- */
+const dayShort = (iso)=> iso ? ICE_DAYS[new Date(iso+"T12:00:00Z").getUTCDay()] : "";
+function subscribeRow(slug, kind){
   const host=location.host;
-  const webcal=`webcal://${host}/api/ics?team=${encodeURIComponent(t.slug)}`;
-  const dl=`https://${host}/api/ics?team=${encodeURIComponent(t.slug)}&download=1`;
+  const q=`team=${encodeURIComponent(slug)}`+(kind?`&kind=${kind}`:"");
+  const webcal=`webcal://${host}/api/ics?${q}`;
+  const dl=`https://${host}/api/ics?${q}&download=1`;
   const gcal=`https://calendar.google.com/calendar/r?cid=${encodeURIComponent(webcal)}`;
   const row=el("div","calrow");
-  // webcal subscribe works for Apple/Outlook/Google ("from URL"); gcal button is a shortcut
+  // webcal subscribe works for Apple/Outlook/Google ("from URL"); gcal is a shortcut
   row.innerHTML=`
     <a class="calbtn primary" href="${webcal}">📅 Áskrift í dagatal</a>
-    <a class="calbtn ghost" href="${gcal}" target="_blank" rel="noopener">Google dagatal</a>
-    <a class="calbtn ghost" href="${dl}">⬇︎ Sækja .ics</a>`;
-  c.appendChild(row);
-  c.appendChild(el("div","note","Leikir liðsins bætast í dagatalið þitt og uppfærast sjálfkrafa þegar dagskráin breytist — nýir tímar, vellir eða úrslitaleikir þegar liðið kemst áfram."));
+    <a class="calbtn ghost" href="${gcal}" target="_blank" rel="noopener">Google</a>
+    <a class="calbtn ghost" href="${dl}">⬇︎ .ics</a>`;
+  return row;
+}
+function leikdagatalCard(t){
+  const c=el("div","card");
+  c.appendChild(el("h2",null,"Leikdagatal"));
+  c.appendChild(subscribeRow(t.slug, null));
+  c.appendChild(el("div","note","Leikir liðsins — uppfærast sjálfkrafa þegar dagskráin breytist (nýir tímar, vellir eða úrslitaleikir þegar liðið kemst áfram)."));
+  return c;
+}
+const VAKT_ICON={ "Svefnstjóri":"😴", "Sameiginleg vakt":"👥", "Foreldravakt":"🟢", "Tengiliður liðs":"📣" };
+// who's on duty now / who's next (Iceland = UTC)
+function vaktStatus(t){
+  const shifts=(t.vaktir&&t.vaktir.shifts)||[];
+  const now=new Date(); let current=null, next=null;
+  for(const s of shifts){
+    const start=new Date(`${s.date}T${s.start}:00Z`);
+    const end=new Date(`${(s.endDate||s.date)}T${s.end}:00Z`);
+    if(now>=start && now<end) current=s;
+    if(now<start && !next) next=s;
+  }
+  return {current,next};
+}
+// compact "who's on vakt / who's next" strip for the main screen
+function vaktNowCard(t){
+  if(!t.vaktir || !(t.vaktir.shifts||[]).length) return null;
+  const {current,next}=vaktStatus(t);
+  if(!current && !next) return null; // all shifts done
+  const c=el("div","card vaktnow");
+  const line=(cls,label,s,meta)=> `<div class="${cls}"><span class="vlabel">${label}</span>`+
+    `<span class="vwho">${VAKT_ICON[s.role]||"🟢"} ${esc(s.parent)}</span><span class="vmeta">${meta}</span></div>`;
+  let html="";
+  if(current) html+=line("vnow","Vakt núna",current,`${esc(current.role)} · til ${current.end}`);
+  if(next) html+=line("vnext","Næsta vakt",next,`${dayShort(next.date)} ${next.start}`);
+  c.innerHTML=html;
+  return c;
+}
+function vaktaplanCard(t){
+  const vk=t.vaktir; if(!vk || !(vk.shifts||[]).length) return null;
+  const c=el("div","card");
+  c.appendChild(el("h2",null,"Vaktaplan"));
+  c.appendChild(subscribeRow(t.slug, "vaktir"));
+  const list=el("div"); list.style.marginTop=".6rem";
+  vk.shifts.forEach(s=>{
+    const overnight = s.endDate && s.endDate!==s.date;
+    const when = overnight
+      ? `${dayShort(s.date)} ${s.start}<br>→ ${dayShort(s.endDate)} ${s.end}`
+      : `${dayShort(s.date)}<br>${s.start}–${s.end}`;
+    const row=el("div","vakt");
+    row.innerHTML=`
+      <div class="vt">${when}</div>
+      <div class="vmid">
+        <div class="vpar">${VAKT_ICON[s.role]||"🟢"} ${esc(s.parent)}</div>
+        <div class="vrole">${esc(s.role)}</div>
+      </div>`;
+    list.appendChild(row);
+  });
+  c.appendChild(list);
+  if(vk.contact) c.appendChild(el("div","note",`📣 Tengiliður liðs: <b>${esc(vk.contact.parent)}</b>`));
+  c.appendChild(el("div","note","Vaktir foreldra — birtum aðeins fornöfn. Bætist í dagatalið og uppfærist sjálfkrafa ef planið breytist."));
   return c;
 }
 
@@ -634,9 +693,16 @@ function updBox(){
 }
 
 // auto re-fetch data periodically to pick up new deploys
-setInterval(()=>{ if(document.visibilityState==="visible") load(); }, 120000);
+// auto-refetch to surface live results — fast on match days, relaxed otherwise
+function scheduleReload(){
+  const matchDay = DATA && (DATA.meta.updateIntervalMin||60) <= 10;
+  setTimeout(async ()=>{
+    if(document.visibilityState==="visible") await load();
+    scheduleReload();
+  }, matchDay ? 45000 : 120000);
+}
 setInterval(tickAll, 1000);
-load();
+load().then(scheduleReload);
 </script>
 </body>
 </html>
