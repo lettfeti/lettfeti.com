@@ -5,28 +5,43 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <title>N1 mótið · Breiðablik</title>
 <meta name="description" content="Fylgstu með Breiðabliksliðunum á N1 mótinu í Akureyri — staða, leikir, vellir og spá um framhaldið." />
-<meta name="theme-color" content="#2d9cdb" />
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%232d9cdb'/%3E%3Ctext x='16' y='22' font-size='16' text-anchor='middle' fill='white' font-family='sans-serif' font-weight='700'%3EN1%3C/text%3E%3C/svg%3E" />
+<meta name="theme-color" content="#006a53" />
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23006a53'/%3E%3Ctext x='16' y='22' font-size='16' text-anchor='middle' fill='white' font-family='sans-serif' font-weight='700'%3EN1%3C/text%3E%3C/svg%3E" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
 <style>
-  /* ---- wc26 glacier palette ---- */
+  /* ---- Breiðablik green theme (default) — built on the wc26 structure ---- */
   :root {
-    --background: #eef7fc;      /* Ice Mist */
+    --background: #edf7f3;
     --surface: #ffffff;
-    --surface-2: #eaf4fb;
-    --border: #d3e6f2;
-    --foreground: #15324f;
-    --muted: #5e7a92;
-    --accent: #2d9cdb;          /* Glacier Blue */
-    --accent-d: #2484bd;
-    --navy: #1e4e8c;            /* Icelandic Navy */
-    --purple: #7b61ff;          /* Lupine Purple */
-    --success: #67c587;         /* Moss Green */
-    --danger: #d65f5f;          /* Ember Red */
+    --surface-2: #e7f4ee;
+    --border: #cfe8df;
+    --foreground: #103227;
+    --muted: #5d8174;
+    --accent: #00a37a;          /* vivid Breiðablik green */
+    --accent-d: #00805f;
+    --navy: #006a53;            /* official club logo green */
+    --purple: #1f8a99;          /* secondary (away badge) */
+    --success: #2fa564;
+    --danger: #ee3424;          /* club logo red */
     --warn: #e9a23b;
+    --glow: #d6efe5;            /* hero/background glow */
+    --sub-on-deep: #c8ebdd;     /* text on the deep gradient */
+    --tint: #e2f3eb;            /* selected-row tint */
+    --tint-h: #def0e7;          /* home badge */
+    --tint-a: #def0f3;          /* away badge */
+    --tint-win: #e7f7ed;        /* qualifying / win tint */
     --radius: 1rem;
+    --shadow: 0 1px 2px rgba(0,106,83,.06), 0 6px 20px rgba(0,106,83,.06);
+  }
+  /* ---- wc26 glacier blue (toggle / ?theme=blue) ---- */
+  [data-theme="blue"] {
+    --background: #eef7fc; --surface: #ffffff; --surface-2: #eaf4fb; --border: #d3e6f2;
+    --foreground: #15324f; --muted: #5e7a92; --accent: #2d9cdb; --accent-d: #2484bd;
+    --navy: #1e4e8c; --purple: #7b61ff; --success: #67c587; --danger: #d65f5f;
+    --glow: #dceefa; --sub-on-deep: #d7ecfb; --tint: #eaf4fb; --tint-h: #e7f0fb;
+    --tint-a: #f2eefd; --tint-win: #e7f7ed;
     --shadow: 0 1px 2px rgba(30,78,140,.05), 0 6px 20px rgba(30,78,140,.05);
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -35,7 +50,7 @@
     font-family: "Outfit", system-ui, sans-serif;
     color: var(--foreground);
     background:
-      radial-gradient(1100px 560px at 50% -10%, #dceefa 0%, transparent 60%),
+      radial-gradient(1100px 560px at 50% -10%, var(--glow) 0%, transparent 60%),
       var(--background);
     min-height: 100vh;
     line-height: 1.5;
@@ -47,7 +62,7 @@
   /* ---- header ---- */
   header.top {
     position: sticky; top: 0; z-index: 20;
-    background: rgba(238,247,252,.82);
+    background: rgba(255,255,255,.72);
     backdrop-filter: saturate(180%) blur(12px);
     border-bottom: 1px solid var(--border);
   }
@@ -76,6 +91,14 @@
     box-shadow: var(--shadow);
   }
   select.teamsel:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
+  .iconbtn { flex: 0 0 auto; width: 42px; height: 42px; display: grid; place-items: center; border-radius: 12px; border: 1px solid var(--border); background: var(--surface); color: var(--navy); cursor: pointer; box-shadow: var(--shadow); padding: 0; }
+  .iconbtn:active { transform: scale(.95); }
+  /* the swatch shows the theme you'd switch TO: green-active → blue dot, blue-active → green dot */
+  .iconbtn .swatch { width: 18px; height: 18px; border-radius: 50%; border: 2px solid #fff; box-shadow: 0 0 0 1px var(--border); background: #2d9cdb; }
+  [data-theme="blue"] .iconbtn .swatch { background: #00a37a; }
+  .toast { position: fixed; left: 50%; bottom: 1.5rem; transform: translateX(-50%); background: var(--navy); color: #fff; padding: .6rem 1rem; border-radius: 12px; font-size: .85rem; font-weight: 600; box-shadow: 0 8px 30px rgba(0,0,0,.2); z-index: 50; opacity: 0; transition: opacity .2s, transform .2s; pointer-events: none; }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(-4px); }
+  .ptag { font-size: .58rem; font-weight: 800; color: var(--warn); margin-left: .15rem; }
 
   /* ---- tabs (vaktir) ---- */
   nav.tabs { display: flex; gap: .25rem; margin: .1rem 0 1rem; background: var(--surface-2); border: 1px solid var(--border); border-radius: 14px; padding: .25rem; }
@@ -100,7 +123,7 @@
   /* hero */
   .hero { background: linear-gradient(135deg, var(--navy), var(--accent)); color: #fff; border: 0; }
   .hero h1 { font-size: 1.45rem; font-weight: 800; letter-spacing: -.02em; line-height: 1.15; }
-  .hero .sub { color: #d7ecfb; font-size: .85rem; font-weight: 500; margin-top: .15rem; }
+  .hero .sub { color: var(--sub-on-deep); font-size: .85rem; font-weight: 500; margin-top: .15rem; }
   .hero .statusline { margin-top: .75rem; }
   .hero .pill { background: rgba(255,255,255,.16); border-color: rgba(255,255,255,.28); color: #fff; backdrop-filter: blur(4px); }
 
@@ -108,7 +131,7 @@
   .cd { display: flex; gap: .4rem; margin-top: .85rem; }
   .cd .u { background: rgba(255,255,255,.14); border: 1px solid rgba(255,255,255,.22); border-radius: 12px; padding: .5rem .2rem; text-align: center; flex: 1; }
   .cd .u b { display: block; font-size: 1.5rem; font-weight: 800; font-variant-numeric: tabular-nums; line-height: 1; }
-  .cd .u span { font-size: .6rem; text-transform: uppercase; letter-spacing: .06em; color: #cfe6f8; }
+  .cd .u span { font-size: .6rem; text-transform: uppercase; letter-spacing: .06em; color: var(--sub-on-deep); }
 
   /* match list */
   .match { display: flex; align-items: center; gap: .7rem; padding: .7rem 0; border-top: 1px solid var(--border); }
@@ -120,8 +143,8 @@
   .match .opp { font-weight: 700; }
   .match .meta { font-size: .73rem; color: var(--muted); display: flex; gap: .5rem; flex-wrap: wrap; }
   .ha { font-size: .6rem; font-weight: 800; border-radius: 5px; padding: .05rem .3rem; }
-  .ha.h { background: #e7f0fb; color: var(--navy); }
-  .ha.a { background: #f2eefd; color: var(--purple); }
+  .ha.h { background: var(--tint-h); color: var(--navy); }
+  .ha.a { background: var(--tint-a); color: var(--purple); }
   .res { font-weight: 800; font-variant-numeric: tabular-nums; font-size: 1rem; }
   .res.w { color: var(--success); } .res.l { color: var(--danger); } .res.d { color: var(--muted); }
 
@@ -130,7 +153,7 @@
   th, td { padding: .5rem .35rem; text-align: center; }
   th { font-size: .65rem; text-transform: uppercase; letter-spacing: .03em; color: var(--muted); font-weight: 700; border-bottom: 1px solid var(--border); }
   td.team { text-align: left; font-weight: 600; }
-  tr.me td { background: #eaf4fb; }
+  tr.me td { background: var(--tint); }
   tr.me td.team { color: var(--navy); font-weight: 800; }
   tr.club td.team::after { content: "★"; color: var(--accent); font-size: .7rem; margin-left: .25rem; }
   .pos { display: inline-grid; place-items: center; width: 20px; height: 20px; border-radius: 6px; font-size: .72rem; font-weight: 800; }
@@ -141,9 +164,9 @@
   .ladder { display: flex; flex-direction: column; gap: .3rem; }
   .rung { display: flex; align-items: center; gap: .6rem; padding: .5rem .65rem; border-radius: 10px; border: 1px solid var(--border); background: var(--surface-2); font-size: .82rem; }
   .rung .n { width: 22px; height: 22px; border-radius: 6px; display: grid; place-items: center; font-weight: 800; font-size: .75rem; background: #fff; border: 1px solid var(--border); }
-  .rung.reach { background: #eaf4fb; border-color: #bcdcf2; }
+  .rung.reach { background: var(--tint); border-color: var(--accent); }
   .rung.qual { box-shadow: inset 3px 0 0 var(--success); }
-  .rung.target { background: linear-gradient(135deg, #e7f0fb, #f2eefd); border-color: var(--accent); font-weight: 700; }
+  .rung.target { background: linear-gradient(135deg, var(--tint-h), var(--tint-a)); border-color: var(--accent); font-weight: 700; }
   .rung .tag { margin-left: auto; font-size: .66rem; font-weight: 700; color: var(--muted); }
 
   .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: .6rem; }
@@ -178,6 +201,10 @@
     </div>
     <div class="switch">
       <select class="teamsel" id="teamsel" aria-label="Veldu lið"></select>
+      <button class="iconbtn" id="sharebtn" title="Deila þessu liði" aria-label="Deila þessu liði">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 13.5l6.8 4M15.4 6.5l-6.8 4"/></svg>
+      </button>
+      <button class="iconbtn" id="themebtn" title="Skipta um lit (grænn / blár)" aria-label="Skipta um lit"><span class="swatch"></span></button>
     </div>
     <nav class="tabs" id="tabs" role="tablist">
       <button role="tab" data-tab="lid" aria-selected="true">Liðið</button>
@@ -246,6 +273,9 @@ async function load(){
   try{
     DATA = await fetchData();
     buildSwitcher();
+    // resolve the team from the URL (#slug) so parents can bookmark/share their squad
+    const fromHash = teamIdFromSlug(location.hash.replace(/^#/,"").split("/")[0]);
+    if(fromHash) SELECTED = fromHash;
     if(!SELECTED){
       const tracked = Object.values(DATA.teams).find(t=>t.isTracked);
       SELECTED = tracked ? tracked.teamId : (DATA.clubTeams[0]||null);
@@ -261,15 +291,75 @@ async function load(){
 function clubTeamObjs(){
   return DATA.clubTeams.map(id=>DATA.teams[id]).filter(Boolean);
 }
+function teamIdFromSlug(slug){
+  if(!slug || !DATA) return null;
+  const t = Object.values(DATA.teams).find(t=>t.slug===slug);
+  return t ? t.teamId : null;
+}
+const slugOf = (id)=> (DATA.teams[id]||{}).slug || "";
+
+// Navigate to a team — drives the URL hash so it's shareable + back-button works.
+function goTeam(id, tab){
+  if(tab) TAB=tab;
+  const slug=slugOf(id);
+  if(location.hash.replace(/^#/,"") !== slug){ SELECTED=id; location.hash=slug; } // → hashchange → render
+  else { SELECTED=id; render(); }
+}
+window.addEventListener("hashchange", ()=>{
+  const id=teamIdFromSlug(location.hash.replace(/^#/,"").split("/")[0]);
+  if(id){ SELECTED=id; }
+  render();
+});
+
 function buildSwitcher(){
   const sel=$("#teamsel"); sel.innerHTML="";
   for(const t of clubTeamObjs()){
     const o=el("option"); o.value=t.teamId;
-    o.textContent = t.name.replace(/^Breiðablik\s*/,"Breiðablik ") + " — " + t.seriesName.replace("Forkeppni ","fl. ");
+    o.textContent = t.name.replace(/^Breiðablik\s*/,"") + " — " + t.seriesName.replace("Forkeppni ","fl. ");
     sel.appendChild(o);
   }
   sel.value = SELECTED || "";
-  sel.onchange = ()=>{ SELECTED=sel.value; render(); };
+  sel.onchange = ()=> goTeam(sel.value);
+  $("#themebtn").onclick = toggleTheme;
+  $("#sharebtn").onclick = shareTeam;
+}
+
+/* ---------- THEME (green default, blue via toggle / ?theme=blue) ---------- */
+function applyTheme(t){
+  if(t==="blue") document.documentElement.setAttribute("data-theme","blue");
+  else document.documentElement.removeAttribute("data-theme");
+  const tc=document.querySelector('meta[name="theme-color"]');
+  if(tc) tc.setAttribute("content", t==="blue" ? "#2d9cdb" : "#006a53");
+}
+function currentTheme(){ return document.documentElement.getAttribute("data-theme")==="blue" ? "blue" : "green"; }
+function toggleTheme(){
+  const next = currentTheme()==="blue" ? "green" : "blue";
+  applyTheme(next);
+  try{ localStorage.setItem("n1theme", next); }catch(e){}
+}
+(function initTheme(){
+  const q=new URLSearchParams(location.search).get("theme");
+  let t=q; if(!t){ try{ t=localStorage.getItem("n1theme"); }catch(e){} }
+  applyTheme(t||"green");
+})();
+
+/* ---------- SHARE ---------- */
+async function shareTeam(){
+  const t=DATA.teams[SELECTED]; if(!t) return;
+  const url = location.origin + location.pathname + "#" + (t.slug||"");
+  const title = t.name + " — N1 mótið";
+  const text = `Fylgstu með ${t.name} á N1 mótinu`;
+  try{
+    if(navigator.share){ await navigator.share({title, text, url}); return; }
+  }catch(e){ if(e && e.name==="AbortError") return; }
+  try{ await navigator.clipboard.writeText(url); toast("Hlekkur afritaður ✓"); }
+  catch(e){ toast(url); }
+}
+let toastT;
+function toast(msg){
+  let t=$("#toast"); if(!t){ t=el("div","toast"); t.id="toast"; document.body.appendChild(t); }
+  t.textContent=msg; t.classList.add("show");
+  clearTimeout(toastT); toastT=setTimeout(()=>t.classList.remove("show"), 2200);
 }
 
 function tone(p){ return p ? p.tone : "idle"; }
@@ -288,6 +378,9 @@ function render(){
   const t = DATA.teams[SELECTED];
   const v = $("#view"); v.innerHTML="";
   if(!t){ v.appendChild(el("div","card","Lið fannst ekki.")); return; }
+  // shareable title for the focused team (helps link previews / bookmarks)
+  document.title = t.name.replace(/^Breiðablik\s*/,"Breiðablik ") + " · N1 mótið";
+  [...$("#tabs").children].forEach(x=>x.setAttribute("aria-selected", String(x.dataset.tab===TAB)));
   v.appendChild(hero(t));
   if(TAB==="lid") renderLid(v,t);
   else if(TAB==="stada") renderStada(v,t);
@@ -340,10 +433,19 @@ function renderLid(v,t){
   card.appendChild(list); v.appendChild(card);
 
   if(t.roster && t.roster.length){
-    const rc=el("div","card"); rc.appendChild(el("h2",null,"Leikmenn"));
+    const rc=el("div","card");
+    rc.appendChild(el("h2",null,`Leikmenn · ${t.roster.length}`));
     const wrap=el("div"); wrap.style.cssText="display:flex;flex-wrap:wrap;gap:.4rem";
-    t.roster.forEach(pl=>{ const name = typeof pl==="string"?pl:(pl.name||""); wrap.appendChild(el("span","pill",esc(name))); });
-    rc.appendChild(wrap); v.appendChild(rc);
+    let anyGuess=false;
+    t.roster.forEach(pl=>{
+      const name = typeof pl==="string"?pl:(pl.name||"");
+      const guess = typeof pl==="object" && pl.guess;
+      if(guess) anyGuess=true;
+      wrap.appendChild(el("span","pill", esc(name) + (guess?'<span class="ptag" title="ágiskun">⚠</span>':"")));
+    });
+    rc.appendChild(wrap);
+    if(anyGuess) rc.appendChild(el("div","note","⚠ = ágiskun um liðaskiptingu, óstaðfest."));
+    v.appendChild(rc);
   } else {
     v.appendChild(el("div","note","Leikmannalisti birtist hér þegar hann er klár."));
   }
@@ -388,7 +490,7 @@ function renderStada(v,t){
     const me = r.teamId===t.teamId;
     const club = r.name.startsWith(DATA.meta.club);
     tr.className = (me?"me ":"")+(club&&!me?"club ":"")+(r.qualLine?"qline":"");
-    const posColor = r.pos<=t.advance ? "background:#e7f7ed;color:#2c8a4f" : "background:var(--surface-2);color:var(--muted)";
+    const posColor = r.pos<=t.advance ? "background:var(--tint-win);color:var(--success)" : "background:var(--surface-2);color:var(--muted)";
     tr.innerHTML=`<td><span class="pos" style="${posColor}">${r.pos}</span></td>
       <td class="team">${esc(r.name)}</td>
       <td>${r.played}</td><td>${r.won}</td><td>${r.drawn}</td><td>${r.lost}</td>
@@ -472,7 +574,7 @@ function renderBlik(v,t){
           <small>Riðill ${esc(ct.lohkoLabel)} · ${nm?("næst "+esc(nm.time||"?")+" "+esc(fmtDateLabel(nm.date).split(" ")[0])):"engir leikir"}</small>
         </div>
         <span class="chev">›</span>`;
-      row.onclick=()=>{ SELECTED=ct.teamId; TAB="lid"; [...$("#tabs").children].forEach(x=>x.setAttribute("aria-selected",String(x.dataset.tab==="lid"))); render(); window.scrollTo({top:0,behavior:"smooth"}); };
+      row.onclick=()=>{ goTeam(ct.teamId,"lid"); window.scrollTo({top:0,behavior:"smooth"}); };
       card.appendChild(row);
     });
     v.appendChild(card);
