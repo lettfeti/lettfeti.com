@@ -270,42 +270,45 @@ function relIs(ms){
   const d=Math.round(h/24); return (past?"fyrir ":"eftir ")+d+" d";
 }
 
-async function fetchData(){
-  // Prefer the live serverless function; fall back to the bundled snapshot so
-  // the page always renders even if the function is cold/erroring or we're
-  // running as a plain static drop-in.
-  // /api/n1 = live function; the others are the bundled snapshot fallback.
-  // Both absolute (canonical /n1 URL) and relative (local `python -m http.server`
-  // inside public/n1) are tried so it works in every context.
-  const bust = "?t="+Date.now();
-  const sources = ["/api/n1", "/n1/data.json"+bust, "./data.json"+bust];
-  for(const url of sources){
-    try{
-      const r = await fetch(url, {cache:"no-store"});
-      if(!r.ok) continue;
-      const d = await r.json();
-      if(d && d.meta && d.teams) return d;
-    }catch(e){ /* try next */ }
-  }
-  throw new Error("no data source");
-}
-async function load(){
+async function fetchJson(url){
   try{
-    DATA = await fetchData();
-    buildSwitcher();
-    // resolve the team from the URL (#slug) so parents can bookmark/share their squad
+    const r = await fetch(url, {cache:"no-store"});
+    if(!r.ok) return null;
+    const d = await r.json();
+    return (d && d.meta && d.teams) ? d : null;
+  }catch(e){ return null; }
+}
+// fast static snapshot — instant first paint (absolute for /n1, relative for local server)
+async function fetchSnapshot(){
+  const b="?t="+Date.now();
+  for(const u of ["/n1/data.json"+b, "./data.json"+b]){ const d=await fetchJson(u); if(d) return d; }
+  return null;
+}
+// live function — fresh but slower on a cold scrape; runs after first paint
+const fetchLive = ()=> fetchJson("/api/n1");
+
+function applyData(d){
+  const firstTime = !DATA;
+  DATA = d;
+  buildSwitcher();
+  if(firstTime){
     const fromHash = teamIdFromSlug(location.hash.replace(/^#/,"").split("/")[0]);
-    if(fromHash) SELECTED = fromHash;
-    if(!SELECTED){
-      const tracked = Object.values(DATA.teams).find(t=>t.isTracked);
-      SELECTED = tracked ? tracked.teamId : (DATA.clubTeams[0]||null);
-    }
+    SELECTED = fromHash
+      || (Object.values(DATA.teams).find(t=>t.isTracked)||{}).teamId
+      || DATA.clubTeams[0] || null;
     $("#loading").classList.add("hidden");
     $("#view").classList.remove("hidden");
-    render();
-  }catch(e){
-    $("#loading").textContent = "Gat ekki sótt gögn. Reyndu aftur." ;
   }
+  render();
+}
+
+async function load(){
+  // 1) paint immediately from the static snapshot, 2) upgrade to live data.
+  if(!DATA){ const snap = await fetchSnapshot(); if(snap) applyData(snap); }
+  const live = await fetchLive();
+  if(live) applyData(live);
+  else if(!DATA){ const snap = await fetchSnapshot(); if(snap) applyData(snap); }
+  if(!DATA) $("#loading").textContent = "Gat ekki sótt gögn. Reyndu aftur.";
 }
 
 function clubTeamObjs(){
