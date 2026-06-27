@@ -99,6 +99,12 @@
   .toast { position: fixed; left: 50%; bottom: 1.5rem; transform: translateX(-50%); background: var(--navy); color: #fff; padding: .6rem 1rem; border-radius: 12px; font-size: .85rem; font-weight: 600; box-shadow: 0 8px 30px rgba(0,0,0,.2); z-index: 50; opacity: 0; transition: opacity .2s, transform .2s; pointer-events: none; }
   .toast.show { opacity: 1; transform: translateX(-50%) translateY(-4px); }
   .ptag { font-size: .58rem; font-weight: 800; color: var(--warn); margin-left: .15rem; }
+  .calrow { display: flex; gap: .5rem; flex-wrap: wrap; }
+  .calbtn { flex: 1 1 auto; min-width: 150px; display: inline-flex; align-items: center; justify-content: center; gap: .45rem; font: inherit; font-weight: 700; font-size: .85rem; padding: .72rem 1rem; border-radius: 12px; cursor: pointer; text-decoration: none; border: 1px solid var(--border); }
+  .calbtn.primary { background: var(--accent); color: #fff; border-color: var(--accent); }
+  .calbtn.primary:active { background: var(--accent-d); }
+  .calbtn.ghost { background: var(--surface); color: var(--navy); }
+  .calbtn.ghost:active { border-color: var(--accent); }
 
   /* ---- tabs (vaktir) ---- */
   nav.tabs { display: flex; gap: .25rem; margin: .1rem 0 1rem; background: var(--surface-2); border: 1px solid var(--border); border-radius: 14px; padding: .25rem; }
@@ -209,7 +215,6 @@
     <nav class="tabs" id="tabs" role="tablist">
       <button role="tab" data-tab="lid" aria-selected="true">Liðið</button>
       <button role="tab" data-tab="stada" aria-selected="false">Staðan</button>
-      <button role="tab" data-tab="spa" aria-selected="false">Spá</button>
       <button role="tab" data-tab="blik" aria-selected="false">Breiðablik</button>
     </nav>
   </div>
@@ -432,6 +437,8 @@ function renderLid(v,t){
   if(!(t.fixtures||[]).length) list.appendChild(el("div","muted","Engir leikir skráðir enn."));
   card.appendChild(list); v.appendChild(card);
 
+  v.appendChild(calendarCard(t));
+
   if(t.roster && t.roster.length){
     const rc=el("div","card");
     rc.appendChild(el("h2",null,`Leikmenn · ${t.roster.length}`));
@@ -470,6 +477,25 @@ function matchRow(t,f){
     </div>
     ${resHtml}`;
   return r;
+}
+
+/* ---------- CALENDAR ---------- */
+function calendarCard(t){
+  const c=el("div","card");
+  c.appendChild(el("h2",null,"Dagatal"));
+  const host=location.host;
+  const webcal=`webcal://${host}/api/ics?team=${encodeURIComponent(t.slug)}`;
+  const dl=`https://${host}/api/ics?team=${encodeURIComponent(t.slug)}&download=1`;
+  const gcal=`https://calendar.google.com/calendar/r?cid=${encodeURIComponent(webcal)}`;
+  const row=el("div","calrow");
+  // webcal subscribe works for Apple/Outlook/Google ("from URL"); gcal button is a shortcut
+  row.innerHTML=`
+    <a class="calbtn primary" href="${webcal}">📅 Áskrift í dagatal</a>
+    <a class="calbtn ghost" href="${gcal}" target="_blank" rel="noopener">Google dagatal</a>
+    <a class="calbtn ghost" href="${dl}">⬇︎ Sækja .ics</a>`;
+  c.appendChild(row);
+  c.appendChild(el("div","note","Leikir liðsins bætast í dagatalið þitt og uppfærast sjálfkrafa þegar dagskráin breytist — nýir tímar, vellir eða úrslitaleikir þegar liðið kemst áfram."));
+  return c;
 }
 
 /* ---------- STAÐAN ---------- */
