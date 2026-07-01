@@ -6,6 +6,7 @@
 // and the static app falls back to the bundled snapshot if this hard-fails.
 import { scrape } from "../lib/torneopal.mjs";
 import bundledVaktir from "../lib/vaktir.mjs";
+import bundledBio from "../lib/bioplan.mjs";
 
 export const config = { maxDuration: 30 };
 
@@ -34,6 +35,7 @@ export default async function handler(req, res) {
       club: process.env.N1_CLUB,
       tracked: process.env.N1_TRACKED,
       vaktir: bundledVaktir.teams || bundledVaktir,
+      bio: bundledBio,
     });
     CACHE = { t: now, data };
     res.setHeader("x-cache", "miss");

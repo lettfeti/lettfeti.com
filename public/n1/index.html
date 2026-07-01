@@ -459,9 +459,35 @@ function renderLid(v,t){
   if(!(t.fixtures||[]).length) list.appendChild(el("div","muted","Engir leikir skráðir enn."));
   card.appendChild(list); v.appendChild(card);
 
+  const bc = bioCard(t);
+  if(bc) v.appendChild(bc);
+
   v.appendChild(leikdagatalCard(t));
   const vp = vaktaplanCard(t);
   if(vp) v.appendChild(vp);
+}
+
+/* ---------- BÍÓ (cinema showing assigned to the team) ---------- */
+function bioCard(t){
+  const b=t.bio; if(!b) return null;
+  const meta=(DATA.meta&&DATA.meta.bio)||{};
+  const c=el("div","card");
+  c.appendChild(el("h2",null,"Bíó 🎬"));
+  const row=el("div","match");
+  const dl=fmtDateLabel(b.date);
+  row.innerHTML=`
+    <div class="when">
+      <div class="t">${esc(b.time)}</div>
+      <div class="d">${esc(dl.split(" ")[0]+" "+b.date.slice(8))}</div>
+    </div>
+    <div class="mid">
+      <div class="opp">${esc(meta.film||"Bíósýning")}</div>
+      <div class="meta"><span>📍 Salur ${esc(b.salur)} · ${esc(meta.cinema||"Nýja Bíó")}</span></div>
+    </div>`;
+  c.appendChild(row);
+  const link = meta.url ? ` <a href="${esc(meta.url)}" target="_blank" rel="noopener" style="color:var(--accent);font-weight:600">Bíóplan mótsins ›</a>` : "";
+  c.appendChild(el("div","note",`Öllum liðum er boðið í bíó. Mætið á uppgefnum tíma og sýnið armband mótsins við inngöngu.${link}`));
+  return c;
 }
 function matchRow(t,f){
   const r=el("div","match");
@@ -656,11 +682,13 @@ function renderBlik(v,t){
     byDiv[div].forEach(ct=>{
       const p=ct.projection||{};
       const nm=ct.nextMatch;
+      const bio=ct.bio;
+      const bioHint = bio ? ` · 🎬 ${esc(fmtDateLabel(bio.date).split(" ")[0])} ${esc(bio.time)}` : "";
       const row=el("div","squad");
       row.innerHTML=`
         <span class="pill ${tone(p)}" style="flex:0 0 auto">${ct.pos||"–"}.</span>
         <div class="nm">${esc(ct.name.replace("Breiðablik ",""))}
-          <small>Riðill ${esc(ct.lohkoLabel)} · ${nm?("næst "+esc(nm.time||"?")+" "+esc(fmtDateLabel(nm.date).split(" ")[0])):"engir leikir"}</small>
+          <small>Riðill ${esc(ct.lohkoLabel)} · ${nm?("næst "+esc(nm.time||"?")+" "+esc(fmtDateLabel(nm.date).split(" ")[0])):"engir leikir"}${bioHint}</small>
         </div>
         <span class="chev">›</span>`;
       row.onclick=()=>{ goTeam(ct.teamId,"lid"); window.scrollTo({top:0,behavior:"smooth"}); };
