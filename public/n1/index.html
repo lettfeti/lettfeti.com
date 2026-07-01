@@ -449,15 +449,29 @@ function hero(t){
 }
 
 /* ---------- LIÐIÐ ---------- */
+function matchListCard(t, fixtures, title, subtitle, emptyMsg){
+  const card=el("div","card");
+  card.appendChild(el("h2",null,esc(title)));
+  if(subtitle) card.appendChild(el("div","muted",`${esc(subtitle)}`)).style.margin="-.3rem 0 .6rem";
+  const list=el("div");
+  (fixtures||[]).forEach(f=>list.appendChild(matchRow(t,f)));
+  if(!(fixtures||[]).length) list.appendChild(el("div","muted",esc(emptyMsg)));
+  card.appendChild(list);
+  return card;
+}
 function renderLid(v,t){
   const vn = vaktNowCard(t);
   if(vn) v.appendChild(vn);
 
-  const card=el("div","card"); card.appendChild(el("h2",null,"Leikir liðsins"));
-  const list=el("div");
-  (t.fixtures||[]).forEach(f=>list.appendChild(matchRow(t,f)));
-  if(!(t.fixtures||[]).length) list.appendChild(el("div","muted","Engir leikir skráðir enn."));
-  card.appendChild(list); v.appendChild(card);
+  if(t.prevStage){
+    // Squad advanced into a day-2 division: new schedule on top, old scores below.
+    const ps=t.prevStage, st=ps.standing||{};
+    const promo = st.pos ? `⬆︎ Komið upp úr ${ps.seriesName} — endaði ${st.pos}. í riðli ${ps.lohkoLabel}` : `⬆︎ Komið upp úr ${ps.seriesName}`;
+    v.appendChild(matchListCard(t, t.fixtures, `Ný deild · ${t.seriesName}`, promo, "Dagskrá ekki komin enn."));
+    v.appendChild(matchListCard(t, ps.fixtures, "Forkeppni · úrslit", `Riðill ${ps.lohkoLabel} · ${ps.seriesName}`, "Engin úrslit."));
+  } else {
+    v.appendChild(matchListCard(t, t.fixtures, "Leikir liðsins", "", "Engir leikir skráðir enn."));
+  }
 
   const bc = bioCard(t);
   if(bc) v.appendChild(bc);
@@ -592,33 +606,41 @@ function groupOf(t){
   const s=DATA.series.find(s=>s.code===t.series);
   return s ? s.groups.find(g=>g.lohko===t.lohko) : null;
 }
-function renderStada(v,t){
-  const g=groupOf(t);
+function standingsCard(title, series, lohko, advance, meId){
+  const s=DATA.series.find(s=>s.code===series);
+  const g=s?s.groups.find(gr=>gr.lohko===lohko):null;
   const card=el("div","card");
-  card.appendChild(el("h2",null,`Riðill ${esc(t.lohkoLabel)} · ${esc(t.seriesName)}`));
-  if(!g){ card.appendChild(el("div","muted","Engin tafla.")); v.appendChild(card); return; }
+  card.appendChild(el("h2",null,esc(title)));
+  if(!g){ card.appendChild(el("div","muted","Engin tafla.")); return card; }
   const tbl=el("table");
   tbl.innerHTML=`<thead><tr><th></th><th class="team" style="text-align:left">Lið</th><th>L</th><th>U</th><th>J</th><th>T</th><th>MM</th><th>Stig</th></tr></thead>`;
   const tb=el("tbody");
   g.rows.forEach((r,i)=>{
     const tr=el("tr");
-    const me = r.teamId===t.teamId;
+    const me = r.teamId===meId;
     const club = r.name.startsWith(DATA.meta.club);
     tr.className = (me?"me ":"")+(club&&!me?"club ":"")+(r.qualLine?"qline":"");
-    const posColor = r.pos<=t.advance ? "background:var(--tint-win);color:var(--success)" : "background:var(--surface-2);color:var(--muted)";
+    const posColor = r.pos<=advance ? "background:var(--tint-win);color:var(--success)" : "background:var(--surface-2);color:var(--muted)";
     tr.innerHTML=`<td><span class="pos" style="${posColor}">${r.pos}</span></td>
       <td class="team">${esc(r.name)}</td>
       <td>${r.played}</td><td>${r.won}</td><td>${r.drawn}</td><td>${r.lost}</td>
       <td>${r.gf}-${r.ga}</td><td><b>${r.points}</b></td>`;
     tb.appendChild(tr);
-    if(r.pos===t.advance){
-      const ctr=el("tr"); ctr.innerHTML=`<td colspan="8" class="cut-label">— efstu ${t.advance} komast áfram í úrslitakeppni —</td>`;
+    if(r.pos===advance){
+      const ctr=el("tr"); ctr.innerHTML=`<td colspan="8" class="cut-label">— efstu ${advance} komast áfram í úrslitakeppni —</td>`;
       tb.appendChild(ctr);
     }
   });
   tbl.appendChild(tb); card.appendChild(tbl);
   card.appendChild(el("div","note","L=leikir, U=unnir, J=jafntefli, T=tapaðir, MM=mörk, Stig=stig. ★ = Breiðablikslið."));
-  v.appendChild(card);
+  return card;
+}
+function renderStada(v,t){
+  v.appendChild(standingsCard(`Riðill ${t.lohkoLabel} · ${t.seriesName}`, t.series, t.lohko, t.advance, t.teamId));
+  if(t.prevStage){
+    const ps=t.prevStage;
+    v.appendChild(standingsCard(`Forkeppni · lokastaða — riðill ${ps.lohkoLabel}`, ps.series, ps.lohko, ps.advance, ps.teamId));
+  }
 }
 
 /* ---------- SPÁ ---------- */
