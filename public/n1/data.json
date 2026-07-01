@@ -6,8 +6,8 @@
     "turnaus": "320_0013",
     "club": "Breiðablik",
     "tracked": "Breiðablik Kristófer Ingi",
-    "generatedAt": "2026-07-01T10:54:46.143Z",
-    "nextUpdate": "2026-07-01T10:56:46.143Z",
+    "generatedAt": "2026-07-01T11:49:25.487Z",
+    "nextUpdate": "2026-07-01T11:51:25.487Z",
     "updateIntervalMin": 2,
     "seriesCount": 6,
     "teamCount": 180,
@@ -2921,7 +2921,7 @@
           "opponent": "KR 2",
           "isHome": true,
           "venue": "V03 - atNorth",
-          "venuePlace": "atNorth",
+          "venuePlace": "atNorth V03",
           "lohko": "B"
         },
         {
@@ -2936,7 +2936,7 @@
           "opponent": "Snæfellsnes Ingvar Freyr",
           "isHome": false,
           "venue": "V06 - Saffran",
-          "venuePlace": "Saffran",
+          "venuePlace": "Saffran V06",
           "lohko": "B"
         },
         {
@@ -2951,7 +2951,7 @@
           "opponent": "Fjölnir 1",
           "isHome": true,
           "venue": "V09 - Greifinn",
-          "venuePlace": "Greifinn",
+          "venuePlace": "Greifinn V09",
           "lohko": "B"
         }
       ],
@@ -2967,7 +2967,7 @@
         "opponent": "KR 2",
         "isHome": true,
         "venue": "V03 - atNorth",
-        "venuePlace": "atNorth",
+        "venuePlace": "atNorth V03",
         "lohko": "B"
       },
       "projection": {
@@ -3026,7 +3026,7 @@
           "opponent": "FH Arngrímur Bjartur",
           "isHome": false,
           "venue": "V12 - Bílaleiga Akureyrar",
-          "venuePlace": "Bílaleiga Akureyrar",
+          "venuePlace": "Bílaleiga Akureyrar V12",
           "lohko": "G"
         },
         {
@@ -3041,7 +3041,7 @@
           "opponent": "ÍA Ísak Bergmann",
           "isHome": true,
           "venue": "V02 - atNorth",
-          "venuePlace": "atNorth",
+          "venuePlace": "atNorth V02",
           "lohko": "G"
         },
         {
@@ -3056,7 +3056,7 @@
           "opponent": "Fjölnir 2",
           "isHome": true,
           "venue": "V06 - Saffran",
-          "venuePlace": "Saffran",
+          "venuePlace": "Saffran V06",
           "lohko": "G"
         }
       ],
@@ -3072,7 +3072,7 @@
         "opponent": "FH Arngrímur Bjartur",
         "isHome": false,
         "venue": "V12 - Bílaleiga Akureyrar",
-        "venuePlace": "Bílaleiga Akureyrar",
+        "venuePlace": "Bílaleiga Akureyrar V12",
         "lohko": "G"
       },
       "projection": {
@@ -3131,7 +3131,7 @@
           "opponent": "Víkingur Gunnar Vatnhamar",
           "isHome": false,
           "venue": "V13 - N1",
-          "venuePlace": "N1",
+          "venuePlace": "N1 V13",
           "lohko": "F"
         },
         {
@@ -3146,7 +3146,7 @@
           "opponent": "Selfoss 1",
           "isHome": true,
           "venue": "V16 - N1",
-          "venuePlace": "N1",
+          "venuePlace": "N1 V16",
           "lohko": "F"
         },
         {
@@ -3161,7 +3161,7 @@
           "opponent": "ÍBV 1",
           "isHome": false,
           "venue": "V14 - N1",
-          "venuePlace": "N1",
+          "venuePlace": "N1 V14",
           "lohko": "F"
         }
       ],
@@ -3177,7 +3177,7 @@
         "opponent": "Víkingur Gunnar Vatnhamar",
         "isHome": false,
         "venue": "V13 - N1",
-        "venuePlace": "N1",
+        "venuePlace": "N1 V13",
         "lohko": "F"
       },
       "projection": {
@@ -4321,7 +4321,7 @@
           "opponent": "Grótta Matthías Kjeld",
           "isHome": true,
           "venue": "V14 - N1",
-          "venuePlace": "N1",
+          "venuePlace": "N1 V14",
           "lohko": "B"
         },
         {
@@ -4336,7 +4336,7 @@
           "opponent": "Þór Ágúst Hlyns",
           "isHome": false,
           "venue": "V14 - N1",
-          "venuePlace": "N1",
+          "venuePlace": "N1 V14",
           "lohko": "B"
         },
         {
@@ -4351,7 +4351,7 @@
           "opponent": "Vestri Elmar Atli",
           "isHome": true,
           "venue": "V15 - N1",
-          "venuePlace": "N1",
+          "venuePlace": "N1 V15",
           "lohko": "B"
         }
       ],
@@ -4367,7 +4367,7 @@
         "opponent": "Grótta Matthías Kjeld",
         "isHome": true,
         "venue": "V14 - N1",
-        "venuePlace": "N1",
+        "venuePlace": "N1 V14",
         "lohko": "B"
       },
       "projection": {
@@ -4426,7 +4426,7 @@
           "opponent": "Keflavík 2",
           "isHome": true,
           "venue": "V07 - Saffran",
-          "venuePlace": "Saffran",
+          "venuePlace": "Saffran V07",
           "lohko": "D"
         },
         {
@@ -4441,7 +4441,7 @@
           "opponent": "KFA Geir",
           "isHome": false,
           "venue": "V10 - Greifinn",
-          "venuePlace": "Greifinn",
+          "venuePlace": "Greifinn V10",
           "lohko": "D"
         },
         {
@@ -4456,7 +4456,7 @@
           "opponent": "Víkingur Stígur Diljan",
           "isHome": true,
           "venue": "V01 - atNorth",
-          "venuePlace": "atNorth",
+          "venuePlace": "atNorth V01",
           "lohko": "D"
         }
       ],
@@ -4472,7 +4472,7 @@
         "opponent": "Keflavík 2",
         "isHome": true,
         "venue": "V07 - Saffran",
-        "venuePlace": "Saffran",
+        "venuePlace": "Saffran V07",
         "lohko": "D"
       },
       "projection": {
@@ -4531,7 +4531,7 @@
           "opponent": "Fylkir Theodór Ingi",
           "isHome": true,
           "venue": "V03 - atNorth",
-          "venuePlace": "atNorth",
+          "venuePlace": "atNorth V03",
           "lohko": "H"
         },
         {
@@ -4546,7 +4546,7 @@
           "opponent": "Álftanes Ísak Óli",
           "isHome": false,
           "venue": "V06 - Saffran",
-          "venuePlace": "Saffran",
+          "venuePlace": "Saffran V06",
           "lohko": "H"
         },
         {
@@ -4561,7 +4561,7 @@
           "opponent": "KA Hans Viktor",
           "isHome": true,
           "venue": "V09 - Greifinn",
-          "venuePlace": "Greifinn",
+          "venuePlace": "Greifinn V09",
           "lohko": "H"
         }
       ],
@@ -4577,7 +4577,7 @@
         "opponent": "Fylkir Theodór Ingi",
         "isHome": true,
         "venue": "V03 - atNorth",
-        "venuePlace": "atNorth",
+        "venuePlace": "atNorth V03",
         "lohko": "H"
       },
       "projection": {
@@ -5581,7 +5581,7 @@
           "opponent": "Stjarnan 5",
           "isHome": true,
           "venue": "V11 - Bílaleiga Akureyrar",
-          "venuePlace": "Bílaleiga Akureyrar",
+          "venuePlace": "Bílaleiga Akureyrar V11",
           "lohko": "G"
         },
         {
@@ -5596,7 +5596,7 @@
           "opponent": "Fylkir Birkir Eyþórs",
           "isHome": false,
           "venue": "V02 - atNorth",
-          "venuePlace": "atNorth",
+          "venuePlace": "atNorth V02",
           "lohko": "G"
         },
         {
@@ -5611,7 +5611,7 @@
           "opponent": "Skallagrímur",
           "isHome": true,
           "venue": "V05 - Saffran",
-          "venuePlace": "Saffran",
+          "venuePlace": "Saffran V05",
           "lohko": "G"
         }
       ],
@@ -5627,7 +5627,7 @@
         "opponent": "Stjarnan 5",
         "isHome": true,
         "venue": "V11 - Bílaleiga Akureyrar",
-        "venuePlace": "Bílaleiga Akureyrar",
+        "venuePlace": "Bílaleiga Akureyrar V11",
         "lohko": "G"
       },
       "projection": {
@@ -5686,7 +5686,7 @@
           "opponent": "Fjölnir 4",
           "isHome": true,
           "venue": "V01 - atNorth",
-          "venuePlace": "atNorth",
+          "venuePlace": "atNorth V01",
           "lohko": "B"
         },
         {
@@ -5701,7 +5701,7 @@
           "opponent": "Hvöt 1",
           "isHome": false,
           "venue": "V04 - atNorth",
-          "venuePlace": "atNorth",
+          "venuePlace": "atNorth V04",
           "lohko": "B"
         },
         {
@@ -5716,7 +5716,7 @@
           "opponent": "KFA Bissi",
           "isHome": true,
           "venue": "V07 - Saffran",
-          "venuePlace": "Saffran",
+          "venuePlace": "Saffran V07",
           "lohko": "B"
         }
       ],
@@ -5732,7 +5732,7 @@
         "opponent": "Fjölnir 4",
         "isHome": true,
         "venue": "V01 - atNorth",
-        "venuePlace": "atNorth",
+        "venuePlace": "atNorth V01",
         "lohko": "B"
       },
       "projection": {
@@ -6841,7 +6841,7 @@
           "opponent": "Haukar Jón Barðdal",
           "isHome": true,
           "venue": "V01 - atNorth",
-          "venuePlace": "atNorth",
+          "venuePlace": "atNorth V01",
           "lohko": "A"
         },
         {
@@ -6856,7 +6856,7 @@
           "opponent": "Leiknir",
           "isHome": false,
           "venue": "V05 - Saffran",
-          "venuePlace": "Saffran",
+          "venuePlace": "Saffran V05",
           "lohko": "A"
         },
         {
@@ -6871,7 +6871,7 @@
           "opponent": "Vestri Pétur Bjarna",
           "isHome": true,
           "venue": "V09 - Greifinn",
-          "venuePlace": "Greifinn",
+          "venuePlace": "Greifinn V09",
           "lohko": "A"
         }
       ],
@@ -6887,7 +6887,7 @@
         "opponent": "Haukar Jón Barðdal",
         "isHome": true,
         "venue": "V01 - atNorth",
-        "venuePlace": "atNorth",
+        "venuePlace": "atNorth V01",
         "lohko": "A"
       },
       "projection": {
@@ -7049,7 +7049,7 @@
           "opponent": "Víkingur Ingvar Jóns",
           "isHome": true,
           "venue": "V04 - atNorth",
-          "venuePlace": "atNorth",
+          "venuePlace": "atNorth V04",
           "lohko": "B"
         },
         {
@@ -7064,7 +7064,7 @@
           "opponent": "Fjölnir 5",
           "isHome": false,
           "venue": "V08 - N1",
-          "venuePlace": "N1",
+          "venuePlace": "N1 V08",
           "lohko": "B"
         },
         {
@@ -7079,7 +7079,7 @@
           "opponent": "KA Kári Gauta",
           "isHome": false,
           "venue": "V11 - Bílaleiga Akureyrar",
-          "venuePlace": "Bílaleiga Akureyrar",
+          "venuePlace": "Bílaleiga Akureyrar V11",
           "lohko": "B"
         }
       ],
@@ -7095,7 +7095,7 @@
         "opponent": "Víkingur Ingvar Jóns",
         "isHome": true,
         "venue": "V04 - atNorth",
-        "venuePlace": "atNorth",
+        "venuePlace": "atNorth V04",
         "lohko": "B"
       },
       "projection": {
@@ -7154,7 +7154,7 @@
           "opponent": "Njarðvík Freysteinn Ingi",
           "isHome": true,
           "venue": "V12 - Bílaleiga Akureyrar",
-          "venuePlace": "Bílaleiga Akureyrar",
+          "venuePlace": "Bílaleiga Akureyrar V12",
           "lohko": "F"
         },
         {
@@ -7169,7 +7169,7 @@
           "opponent": "Valur 4",
           "isHome": false,
           "venue": "V04 - atNorth",
-          "venuePlace": "atNorth",
+          "venuePlace": "atNorth V04",
           "lohko": "F"
         },
         {
@@ -7184,7 +7184,7 @@
           "opponent": "Þór Bjarni Guðjón",
           "isHome": false,
           "venue": "V07 - Saffran",
-          "venuePlace": "Saffran",
+          "venuePlace": "Saffran V07",
           "lohko": "F"
         }
       ],
@@ -7200,7 +7200,7 @@
         "opponent": "Njarðvík Freysteinn Ingi",
         "isHome": true,
         "venue": "V12 - Bílaleiga Akureyrar",
-        "venuePlace": "Bílaleiga Akureyrar",
+        "venuePlace": "Bílaleiga Akureyrar V12",
         "lohko": "F"
       },
       "projection": {
@@ -8309,7 +8309,7 @@
           "opponent": "Fylkir Benni Daríus",
           "isHome": true,
           "venue": "V09 - Greifinn",
-          "venuePlace": "Greifinn",
+          "venuePlace": "Greifinn V09",
           "lohko": "G"
         },
         {
@@ -8324,7 +8324,7 @@
           "opponent": "Stjarnan 8",
           "isHome": false,
           "venue": "V01 - atNorth",
-          "venuePlace": "atNorth",
+          "venuePlace": "atNorth V01",
           "lohko": "G"
         },
         {
@@ -8339,7 +8339,7 @@
           "opponent": "Þór Christian Jakobsen",
           "isHome": true,
           "venue": "V03 - atNorth",
-          "venuePlace": "atNorth",
+          "venuePlace": "atNorth V03",
           "lohko": "G"
         }
       ],
@@ -8355,7 +8355,7 @@
         "opponent": "Fylkir Benni Daríus",
         "isHome": true,
         "venue": "V09 - Greifinn",
-        "venuePlace": "Greifinn",
+        "venuePlace": "Greifinn V09",
         "lohko": "G"
       },
       "projection": {
@@ -8414,7 +8414,7 @@
           "opponent": "Höttur 2",
           "isHome": true,
           "venue": "V07 - Saffran",
-          "venuePlace": "Saffran",
+          "venuePlace": "Saffran V07",
           "lohko": "B"
         },
         {
@@ -8429,7 +8429,7 @@
           "opponent": "Afturelding Holtan",
           "isHome": false,
           "venue": "V11 - Bílaleiga Akureyrar",
-          "venuePlace": "Bílaleiga Akureyrar",
+          "venuePlace": "Bílaleiga Akureyrar V11",
           "lohko": "B"
         },
         {
@@ -8444,7 +8444,7 @@
           "opponent": "Vestri Birkir Eydal",
           "isHome": true,
           "venue": "V03 - atNorth",
-          "venuePlace": "atNorth",
+          "venuePlace": "atNorth V03",
           "lohko": "B"
         }
       ],
@@ -8460,7 +8460,7 @@
         "opponent": "Höttur 2",
         "isHome": true,
         "venue": "V07 - Saffran",
-        "venuePlace": "Saffran",
+        "venuePlace": "Saffran V07",
         "lohko": "B"
       },
       "projection": {
@@ -8519,7 +8519,7 @@
           "opponent": "Haukar Einar Karl",
           "isHome": true,
           "venue": "V03 - atNorth",
-          "venuePlace": "atNorth",
+          "venuePlace": "atNorth V03",
           "lohko": "D"
         },
         {
@@ -8534,7 +8534,7 @@
           "opponent": "Keflavík 4",
           "isHome": false,
           "venue": "V06 - Saffran",
-          "venuePlace": "Saffran",
+          "venuePlace": "Saffran V06",
           "lohko": "D"
         },
         {
@@ -8549,7 +8549,7 @@
           "opponent": "Samherjar Mbappe",
           "isHome": true,
           "venue": "V09 - Greifinn",
-          "venuePlace": "Greifinn",
+          "venuePlace": "Greifinn V09",
           "lohko": "D"
         }
       ],
@@ -8565,7 +8565,7 @@
         "opponent": "Haukar Einar Karl",
         "isHome": true,
         "venue": "V03 - atNorth",
-        "venuePlace": "atNorth",
+        "venuePlace": "atNorth V03",
         "lohko": "D"
       },
       "projection": {
@@ -9604,7 +9604,7 @@
           "opponent": "Fram 5",
           "isHome": false,
           "venue": "V09 - Greifinn",
-          "venuePlace": "Greifinn",
+          "venuePlace": "Greifinn V09",
           "lohko": "A"
         },
         {
@@ -9619,7 +9619,7 @@
           "opponent": "Fjölnir 8",
           "isHome": false,
           "venue": "V01 - atNorth",
-          "venuePlace": "atNorth",
+          "venuePlace": "atNorth V01",
           "lohko": "A"
         },
         {
@@ -9634,7 +9634,7 @@
           "opponent": "FH Adolf Daði",
           "isHome": true,
           "venue": "V06 - Saffran",
-          "venuePlace": "Saffran",
+          "venuePlace": "Saffran V06",
           "lohko": "A"
         },
         {
@@ -9649,7 +9649,7 @@
           "opponent": "KR 8",
           "isHome": true,
           "venue": "V09 - Greifinn",
-          "venuePlace": "Greifinn",
+          "venuePlace": "Greifinn V09",
           "lohko": "A"
         }
       ],
@@ -9665,7 +9665,7 @@
         "opponent": "Fram 5",
         "isHome": false,
         "venue": "V09 - Greifinn",
-        "venuePlace": "Greifinn",
+        "venuePlace": "Greifinn V09",
         "lohko": "A"
       },
       "projection": {
@@ -9724,7 +9724,7 @@
           "opponent": "Víkingur Valdimar Ingimundar",
           "isHome": false,
           "venue": "V15 - N1",
-          "venuePlace": "N1",
+          "venuePlace": "N1 V15",
           "lohko": "D"
         },
         {
@@ -9739,7 +9739,7 @@
           "opponent": "Fjölnir 7",
           "isHome": false,
           "venue": "V15 - N1",
-          "venuePlace": "N1",
+          "venuePlace": "N1 V15",
           "lohko": "D"
         },
         {
@@ -9754,7 +9754,7 @@
           "opponent": "Hamar/Ægir Binni Eyþórs",
           "isHome": true,
           "venue": "V14 - N1",
-          "venuePlace": "N1",
+          "venuePlace": "N1 V14",
           "lohko": "D"
         },
         {
@@ -9769,7 +9769,7 @@
           "opponent": "Valur 5",
           "isHome": true,
           "venue": "V11 - Bílaleiga Akureyrar",
-          "venuePlace": "Bílaleiga Akureyrar",
+          "venuePlace": "Bílaleiga Akureyrar V11",
           "lohko": "D"
         }
       ],
@@ -9785,7 +9785,7 @@
         "opponent": "Víkingur Valdimar Ingimundar",
         "isHome": false,
         "venue": "V15 - N1",
-        "venuePlace": "N1",
+        "venuePlace": "N1 V15",
         "lohko": "D"
       },
       "projection": {
