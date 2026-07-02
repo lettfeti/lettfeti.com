@@ -179,6 +179,13 @@
   .ha.a { background: var(--tint-a); color: var(--purple); }
   .res { font-weight: 800; font-variant-numeric: tabular-nums; font-size: 1rem; }
   .res.w { color: var(--success); } .res.l { color: var(--danger); } .res.d { color: var(--muted); }
+  /* conditional continuation row (opponent depends on the previous result) */
+  .match.cond { align-items: flex-start; }
+  .match.cond .when .t { color: var(--muted); }
+  .match.cond .opp { display: flex; align-items: center; gap: .35rem; }
+  .match.cond .opp::before { content: "⑂"; color: var(--accent); font-weight: 800; }
+  .match.cond .branch { font-size: .74rem; color: var(--muted); margin-top: .3rem; display: flex; gap: .35rem; flex-wrap: wrap; }
+  .match.cond .branch b { color: var(--foreground); font-weight: 700; }
 
   /* table */
   table { width: 100%; border-collapse: collapse; font-size: .85rem; }
@@ -490,7 +497,10 @@ function matchListCard(t, fixtures, title, subtitle, emptyMsg){
   card.appendChild(el("h2",null,esc(title)));
   if(subtitle) card.appendChild(el("div","muted",`${esc(subtitle)}`)).style.margin="-.3rem 0 .6rem";
   const list=el("div");
-  (fixtures||[]).forEach(f=>list.appendChild(matchRow(t,f)));
+  (fixtures||[]).forEach(f=>{
+    list.appendChild(matchRow(t,f));
+    if(f.followups){ const cr=condFollowRow(f); if(cr) list.appendChild(cr); }
+  });
   if(!(fixtures||[]).length) list.appendChild(el("div","muted",esc(emptyMsg)));
   card.appendChild(list);
   return card;
@@ -538,6 +548,27 @@ function bioCard(t){
   const link = meta.url ? ` <a href="${esc(meta.url)}" target="_blank" rel="noopener" style="color:var(--accent);font-weight:600">Bíóplan mótsins ›</a>` : "";
   c.appendChild(el("div","note",`Öllum liðum er boðið í bíó. Mætið á uppgefnum tíma og sýnið armband mótsins við inngöngu.${link}`));
   return c;
+}
+// A pending "next-but-one" game whose opponent/venue depends on the result of
+// `nm` (the placement bracket). Shown as one row with both branches.
+function condFollowRow(nm){
+  const fu = nm && nm.followups;
+  if(!fu || (!fu.win && !fu.lose)) return null;
+  const time = (fu.win&&fu.win.time) || (fu.lose&&fu.lose.time) || "";
+  const date = (fu.win&&fu.win.date) || (fu.lose&&fu.lose.date) || nm.date;
+  const dl = date ? fmtDateLabel(date).split(" ").slice(0,1)+" "+date.slice(8) : "";
+  const branch = (leg,icon,label)=> leg
+    ? `<div class="branch"><span>${icon} <b>${label}</b></span><span>gegn ${esc(leg.opponent)}</span><span>· 📍 ${esc(leg.venuePlace)} · ${esc(seatRange(leg.lohko))}</span></div>`
+    : "";
+  const r=el("div","match cond");
+  r.innerHTML = `
+    <div class="when"><div class="t">${esc(time||"–")}</div><div class="d">${esc(dl)}</div></div>
+    <div class="mid">
+      <div class="opp">Framhald · fer eftir úrslitum</div>
+      ${branch(fu.win,"🟢","Vinni")}
+      ${branch(fu.lose,"⚪","Tapi")}
+    </div>`;
+  return r;
 }
 function matchRow(t,f){
   const r=el("div","match");
