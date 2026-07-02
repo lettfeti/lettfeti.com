@@ -155,6 +155,16 @@
   .cd .u b { display: block; font-size: 1.5rem; font-weight: 800; font-variant-numeric: tabular-nums; line-height: 1; }
   .cd .u span { font-size: .6rem; text-transform: uppercase; letter-spacing: .06em; color: var(--sub-on-deep); }
 
+  /* same-day continuation (depends on win/lose of the next match) */
+  .fu { margin-top: .9rem; border-top: 1px solid rgba(255,255,255,.18); padding-top: .65rem; }
+  .fu .fuh { font-size: .68rem; text-transform: uppercase; letter-spacing: .05em; color: var(--sub-on-deep); font-weight: 800; }
+  .fu .leg { display: flex; gap: .55rem; align-items: flex-start; margin-top: .5rem; font-size: .8rem; line-height: 1.3; }
+  .fu .leg .tag { flex: 0 0 auto; font-size: .62rem; font-weight: 800; text-transform: uppercase; letter-spacing: .03em; border-radius: 999px; padding: .18rem .5rem; margin-top: .05rem; }
+  .fu .leg.w .tag { background: rgba(255,255,255,.22); border: 1px solid rgba(255,255,255,.32); color: #fff; }
+  .fu .leg.l .tag { background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.2); color: var(--sub-on-deep); }
+  .fu .leg .body b { font-weight: 800; }
+  .fu .leg .body .det { color: var(--sub-on-deep); font-size: .72rem; }
+
   /* match list */
   .match { display: flex; align-items: center; gap: .7rem; padding: .7rem 0; border-top: 1px solid var(--border); }
   .match:first-child { border-top: 0; }
@@ -414,6 +424,31 @@ function render(){
 }
 
 /* ---------- HERO ---------- */
+// Placement bracket: the game after `nm` depends on whether the team wins/loses.
+// Both legs are usually the same day — surface them so parents can plan.
+function seatRange(lohko){
+  const m = String(lohko||"").match(/^(\d+)\s*-\s*(\d+)$/);
+  return m ? `sæti ${m[1]}.–${m[2]}.` : (lohko ? `riðill ${lohko}` : "");
+}
+function fuLeg(leg, cls, label){
+  if(!leg) return "";
+  const seat = seatRange(leg.lohko);
+  const when = `${esc(leg.time||"tími óstaðf.")}`;
+  const det = [seat, `📍 ${esc(leg.venuePlace)}`].filter(Boolean).join(" · ");
+  return `<div class="leg ${cls}"><span class="tag">${label}</span>
+    <div class="body"><b>kl. ${when}</b> · gegn ${esc(leg.opponent)}<br><span class="det">${det}</span></div></div>`;
+}
+function followupsHtml(nm){
+  const fu = nm && nm.followups;
+  if(!fu || (!fu.win && !fu.lose)) return "";
+  const same = (fu.win&&fu.win.date===nm.date) || (fu.lose&&fu.lose.date===nm.date);
+  return `<div class="fu">
+    <div class="fuh">Framhald${same?" samdægurs":""} · fer eftir úrslitum</div>
+    ${fuLeg(fu.win,"w","Vinni")}
+    ${fuLeg(fu.lose,"l","Tapi")}
+  </div>`;
+}
+
 function hero(t){
   const p=t.projection||{};
   const c=el("div","card hero");
@@ -440,7 +475,8 @@ function hero(t){
         <div class="u"><b data-u="m">–</b><span>mín</span></div>
         <div class="u"><b data-u="s">–</b><span>sek</span></div>
       </div>
-      <div class="sub" style="margin-top:.5rem;font-size:.74rem">📍 ${esc(nm.venuePlace)} · ${esc(nm.time||"tími óstaðf.")} · ${esc(fmtDateLabel(nm.date))}</div>`;
+      <div class="sub" style="margin-top:.5rem;font-size:.74rem">📍 ${esc(nm.venuePlace)} · ${esc(nm.time||"tími óstaðf.")} · ${esc(fmtDateLabel(nm.date))}</div>
+      ${followupsHtml(nm)}`;
     c.querySelector("#herocd").replaceWith(box);
   } else {
     c.querySelector("#herocd").innerHTML = `<div class="sub" style="margin-top:.8rem">Engir fleiri leikir áætlaðir.</div>`;
