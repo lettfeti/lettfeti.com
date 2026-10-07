@@ -11,9 +11,10 @@ type Device = {
   tile: string;
   sub: string;
   setup: string;
+  base?: string;
   rows: Row[];
   scenario?: { title: string; steps: string[] };
-  table?: string[][];
+  apps?: string[][];
   detailsTitle?: string;
   steps?: Step[];
   notes?: string[];
@@ -23,16 +24,16 @@ type Device = {
 };
 
 const LABELS: Record<string, string> = {
-  sleep: 'Svefntími',
+  sleep: 'Skjátími',
   approve: 'Samþykki',
   age: 'Aldursmörk',
   chat: 'Spjall',
-  calls: 'Ókunn númer',
+  calls: 'Óþekkt númer',
   net: 'Netsía',
 };
 
 const ICONS: Record<string, string> = {
-  sleep: '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5z"/></svg>',
+  sleep: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg>',
   approve: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>',
   age: '<span aria-hidden="true">13+</span>',
   chat: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 12a7.5 7.5 0 0 1-11 6.6L4 20l1.4-4.6A7.5 7.5 0 1 1 20 12z"/></svg>',
@@ -51,31 +52,31 @@ const DEVICES: Device[] = [
   {
     id: 'iphone', group: 'phones', name: 'iPhone og iPad', tile: 'iPhone eða iPad', sub: 'Apple Family Sharing',
     setup: 'Búðu til barnaaðgang á þínum iPhone: `Settings → Family → Add Member → Create Child Account`.',
+    base: 'Stillingarnar eru undir `Settings → Family → [barn]` á þínum iPhone.',
     rows: [
-      { key: 'sleep', text: '`Settings → Family → [barn] → Screen Time Schedule`' },
-      { key: 'approve', text: '`Settings → Family → [barn] → Apps & Websites → Ask to Buy`' },
-      { key: 'age', text: '`Settings → Family → [barn] → Content & Privacy Restrictions`' },
-      { key: 'chat', text: '`Settings → Family → [barn] → Allowed Contacts`. Barnið þarf leyfi fyrir hverjum nýjum tengilið.' },
+      { key: 'sleep', text: '`Screen Time Schedule` og `Time Allowances`' },
+      { key: 'approve', text: '`Apps & Websites → Ask to Buy`' },
+      { key: 'age', text: '`Content & Privacy Restrictions`' },
+      { key: 'chat', text: '`Allowed Contacts → Manage Contacts`. Þá þarf barnið leyfi fyrir hverjum nýjum tengilið.' },
       { key: 'calls', text: 'Á síma barnsins: `Settings → Apps → Phone → Screen Unknown Callers → Silence`. Símtöl frá númerum utan tengiliða fara beint í talhólf.' },
     ],
     detailsTitle: 'Uppsetning skref fyrir skref (iOS 27)',
     steps: [
-      'Á þínum iPhone: `Settings → Family → Add Member → Create Child Account`.',
-      'Skráðu barnið inn á tækið sitt með nýja aðganginum og uppfærðu í nýjustu útgáfu.',
-      { t: 'Á þínum iPhone: `Settings → Family → [barn]`. Þar stillir þú:', sub: [
+      'Skráðu barnið inn á tækið sitt með barnaaðganginum og uppfærðu í nýjustu útgáfu.',
+      { t: 'Undir `Settings → Family → [barn]` á þínum iPhone:', sub: [
         '`Time Allowances`: daglegur tími í flokkum eins og leikjum og samfélagsmiðlum',
         '`Screen Time Schedule`: hvaða öpp eru opin fyrir skóla, í skóla, eftir skóla og á kvöldin',
         '`Allowed Contacts`: kveiktu á `Manage Contacts` og slökktu á `Allow Contact Editing`',
-        '`Apps & Websites`: `Ask to Buy` (kaup og niðurhöl) og `Ask to Browse` (nýjar vefsíður). Sjálfgefið á fyrir börn yngri en 13 ára',
+        '`Apps & Websites`: `Ask to Buy` (kaup og niðurhöl) og `Ask to Browse` (nýjar vefsíður). Sjálfgefið kveikt hjá börnum yngri en 13 ára',
         '`Content & Privacy Restrictions`: aldursmörk á öpp, kvikmyndir og tónlist',
         '`Communication Safety`: felur myndir og myndbönd með nekt eða ofbeldi',
       ] },
-      'Settu Screen Time lykilorð sem barnið þekkir ekki.',
-      'Á síma barnsins: `Settings → Apps → Phone → Screen Unknown Callers → Silence`, og sama fyrir FaceTime: `Settings → Apps → FaceTime → Silence Unknown Callers`.',
+      'Settu Screen Time-lykilorð sem barnið þekkir ekki.',
+      'Á síma barnsins: sama fyrir FaceTime í `Settings → Apps → FaceTime → Silence Unknown Callers`.',
     ],
     notes: [
-      'Á eldri iOS (26 og fyrr) eru stillingarnar undir `Settings → Screen Time → [barn]` og heita Downtime, App Limits og Communication Limits.',
-      'Ef þú ert ekki með iPhone má setja þetta upp beint á tæki barnsins og læsa með Screen Time lykilorði.',
+      'Í iOS 26 og eldri eru stillingarnar undir `Settings → Screen Time → [barn]` og heita `Downtime`, `App Limits` og `Communication Limits`.',
+      'Ef þú ert ekki með iPhone má setja þetta upp beint á tæki barnsins og læsa með Screen Time-lykilorði.',
     ],
     monitor: [
       'Beiðnir um meiri tíma, ný öpp, kaup og nýja tengiliði berast þér sem tilkynningar.',
@@ -85,68 +86,67 @@ const DEVICES: Device[] = [
   },
   {
     id: 'android', group: 'phones', name: 'Android', tile: 'Android', sub: 'Google Family Link (Samsung o.fl.)',
-    setup: 'Sæktu Family Link á þinn síma (virkar líka á iPhone) og búðu til aðgang barnsins þar.',
+    setup: 'Sæktu Family Link-appið á þinn síma (virkar líka á iPhone) og búðu til barnaaðgang þar.',
+    base: 'Stillingarnar eru undir `Family Link → [barn]`.',
     rows: [
-      { key: 'sleep', text: '`Family Link → [barn] → Screen time → Downtime`' },
-      { key: 'approve', text: '`Family Link → [barn] → Controls → Google Play`: þú samþykkir ný öpp og kaup' },
-      { key: 'age', text: 'Aldursmörk í `Google Play`, og `Try to block explicit sites` undir `Google Chrome`' },
-      { key: 'calls', text: 'Á síma barnsins: `Phone → Settings → Blocked numbers → Unknown`. Lokar á falin númer, en ekki á númer sem eru bara utan tengiliða.' },
+      { key: 'sleep', text: '`Screen time → Schedules → Downtime`, og daglegt hámark í `Screen time → Time limits`' },
+      { key: 'approve', text: '`Controls → Google Play → Require approval for`' },
+      { key: 'age', text: 'Aldursmörk í `Controls → Google Play` og `Try to block explicit sites` í `Controls → Google Chrome and Web`' },
+      { key: 'calls', text: 'Á síma barnsins: `Phone → Settings → Blocked numbers → Unknown`. Lokar aðeins á falin númer, ekki á öll númer utan tengiliða.' },
     ],
     steps: [
-      'Sæktu Family Link appið á þinn síma.',
-      'Búðu til Google-aðgang fyrir barnið í appinu, eða bættu eftirliti við aðgang sem það á.',
+      'Búðu til Google-aðgang fyrir barnið í appinu, eða settu eftirlit á aðgang sem það á fyrir.',
       'Skráðu barnið inn á tækið og fylgdu leiðbeiningunum til að tengja það.',
-      { t: 'Í Family Link: veldu barnið og stilltu:', sub: [
+      { t: 'Undir `Family Link → [barn]`:', sub: [
         '`Screen time → Time limits`: daglegt hámark, má vera mismunandi eftir dögum',
-        '`Downtime` og `School time`: tækið læst á nóttunni og í skólanum',
+        '`Screen time → Schedules`: `Downtime` á nóttunni og `School time` í skólanum',
         '`App limits`: tímamörk á einstök öpp, eða lokað á app',
-        '`Google Play`: samþykki fyrir öppum og kaupum, aldursmörk',
-        'Chrome, Google leit (SafeSearch) og YouTube',
+        '`Controls → Google Play`: samþykki fyrir öppum og kaupum, og aldursmörk',
+        '`Controls → Google Chrome and Web`, Google-leit (SafeSearch) og YouTube',
       ] },
     ],
     monitor: [
       'Family Link sýnir hve lengi barnið notar hvert app, dag fyrir dag.',
-      'Þú getur læst tækinu strax eða gefið auka tíma úr þínum síma.',
+      'Þú getur læst tækinu strax eða gefið aukatíma úr þínum síma.',
       'Staðsetning tækisins sést á korti.',
     ],
     good: [
       'Þegar barnið verður 13 ára fáið þið bæði tölvupóst frá Google. Eftirlitið heldur áfram og barnið getur ekki slökkt á því án þíns samþykkis fyrr en það verður 18 ára.',
-      'Ekki er hægt að setja tímamörk á kerfisöpp, t.d. símann sjálfan.',
+      'Ekki er hægt að setja tímamörk á kerfisöpp, t.d. símaappið.',
     ],
-    src: 'https://families.google/familylink/',
+    src: 'https://support.google.com/families/answer/7103340',
   },
   {
     id: 'mac', group: 'computers', name: 'Mac', tile: 'Mac', sub: 'Apple Family Sharing',
-    setup: 'Sami barnaaðgangur og á iPhone. Á sameiginlegum Mac: `System Settings → Users & Groups → Add User → Standard`.',
+    setup: 'Sami barnaaðgangur og á iPhone. Ef tölvan er sameiginleg: búðu til `Standard`-notanda fyrir barnið í `System Settings → Users & Groups → Add User`.',
+    base: 'Stillingarnar eru undir `System Settings → Family → [barn]`.',
     rows: [
-      { key: 'sleep', text: '`System Settings → Family → [barn] → Screen Time Schedule`' },
-      { key: 'approve', text: '`System Settings → Family → [barn] → Apps & Websites → Ask to Buy`' },
-      { key: 'age', text: '`Content & Privacy Restrictions → Limit Adult Websites`. Virkar í Safari, svo lokaðu á aðra vafra.' },
+      { key: 'sleep', text: '`Screen Time Schedule` og `Time Allowances`' },
+      { key: 'approve', text: '`Apps & Websites → Ask to Buy`' },
+      { key: 'age', text: '`Content & Privacy Restrictions → Limit Adult Websites`. Virkar örugglega í Safari, svo lokaðu á aðra vafra.' },
     ],
     detailsTitle: 'Uppsetning skref fyrir skref (macOS 27)',
     steps: [
-      'Ef Macinn er sameiginlegur: búðu til `Standard` notanda fyrir barnið og skráðu það inn með Apple-aðgangi sínum.',
-      '`System Settings → Family → [barn] → Get Started`. Þar ferðu í gegnum vefsíður, efni, tengiliði, tíma og lykilorð.',
-      '`Content & Privacy Restrictions`: `Limit Adult Websites`, eða `Approved Websites Only` fyrir yngri börn.',
-      'Lokaðu á aðra vafra en Safari.',
+      'Skráðu barnið inn á sinn `Standard`-notanda með barnaaðganginum.',
+      'Á þínum aðgangi: `System Settings → Family → [barn] → Get Started`. Þar ferðu í gegnum vefsíður, efni, tengiliði, tíma og lykilorð.',
+      'Lokaðu á aðra vafra en Safari undir `Apps & Websites`.',
     ],
-    notes: ['Á eldri macOS (26 og fyrr) eru stillingarnar undir `System Settings → Screen Time`.'],
-    good: ['Aldursmörk á öpp virka aðeins á iPhone og iPad. Á Mac þarftu að loka á einstök öpp.'],
+    notes: ['Í macOS 26 og eldri eru stillingarnar undir `System Settings → Screen Time`.'],
+    good: ['Aldursmörk á öpp virka aðeins á iPhone og iPad. Á Mac lokar þú á einstök öpp.'],
     src: 'https://support.apple.com/en-us/105121',
   },
   {
     id: 'windows', group: 'computers', name: 'Windows', tile: 'Windows', sub: 'Microsoft Family Safety',
-    setup: 'Bættu barninu við á [account.microsoft.com/family](https://account.microsoft.com/family) og leyfðu það á tölvunni: `Settings → Accounts → Family`. Barnið á að vera `Standard user`, ekki `Administrator`.',
+    setup: 'Bættu barninu við á [account.microsoft.com/family](https://account.microsoft.com/family) og veittu því aðgang að tölvunni í `Settings → Accounts → Family → [barn] → Allow`. Barnið á að vera `Standard user`, ekki `Administrator`.',
+    base: 'Stillingarnar eru á `account.microsoft.com/family → [barn]`.',
     rows: [
-      { key: 'sleep', text: 'account.microsoft.com/family → [barn] → `Screen time`' },
+      { key: 'sleep', text: '`Screen time`' },
       { key: 'approve', text: '`Manage spending → Require approval for every purchase`' },
-      { key: 'age', text: '`Edge → Filter inappropriate websites and searches`, og aldursmörk á öpp og leiki' },
+      { key: 'age', text: '`Edge → Filter inappropriate websites and searches` og aldursmörk á öpp og leiki' },
     ],
     steps: [
-      'Á [account.microsoft.com/family](https://account.microsoft.com/family): búðu til fjölskylduhóp og bættu barninu við með eigin Microsoft-aðgangi.',
-      'Á tölvunni: `Settings → Accounts → Family → [barn] → Allow`. Barnið skráir sig inn einu sinni.',
-      'Gakktu úr skugga um að barnið sé `Standard user`. Annars getur það breytt stillingunum.',
-      { t: 'Á account.microsoft.com/family, undir barninu:', sub: [
+      'Barnið skráir sig inn á tölvuna einu sinni.',
+      { t: 'Undir `account.microsoft.com/family → [barn]`:', sub: [
         '`Screen time`: daglegur tími og hvenær tölvan má vera í notkun',
         '`Edge`: `Filter inappropriate websites and searches`',
         'Aldursmörk á öpp og leiki',
@@ -154,39 +154,40 @@ const DEVICES: Device[] = [
         'Kveiktu á `Activity reporting`',
       ] },
     ],
-    monitor: ['Activity reporting sýnir hvaða öpp og vefsíður barnið notar og hve lengi.'],
+    monitor: ['`Activity reporting` sýnir hvaða öpp og vefsíður barnið notar og hve lengi.'],
     good: [
-      'Vefsían virkar aðeins í Edge. Þegar hún er á lokast aðrir vafrar þar til þú samþykkir þá.',
-      'Sami Microsoft-aðgangur gildir á Xbox.',
+      'Vefsían virkar aðeins í Edge, svo aðrir vafrar eru lokaðir þar til þú leyfir þá.',
+      'Sami fjölskylduhópur gildir á Xbox.',
     ],
     src: 'https://blogs.windows.com/windowsexperience/2026/09/08/listening-to-families-improving-microsoft-family/',
   },
   {
     id: 'chromebook', group: 'computers', name: 'Chromebook', tile: 'Chromebook', sub: 'Google Family Link',
-    setup: 'Sama Family Link og fyrir Android. Á Chromebook: veldu barn við `Who\'s using the device?` og slökktu á `Guest mode`.',
+    setup: 'Sami barnaaðgangur og á Android. Á Chromebook: veldu barn við `Who\'s using the device?` og slökktu á `Guest mode`.',
+    base: 'Stillingarnar eru undir `Family Link → [barn]`.',
     rows: [
-      { key: 'sleep', text: '`Family Link → [barn] → Screen time → Schedules`' },
-      { key: 'approve', text: '`Family Link → [barn] → Controls → Google Play`' },
+      { key: 'sleep', text: '`Screen time → Schedules`' },
+      { key: 'approve', text: '`Controls → Google Play`' },
       { key: 'age', text: '`Controls → Google Chrome and Web → Try to block explicit sites`' },
     ],
     good: ['Skólatölvum og skólaaðgöngum (Google Workspace for Education) stjórnar skólinn. Family Link nær ekki til þeirra.'],
     src: 'https://support.google.com/chromebook/answer/7680868',
   },
   {
-    id: 'playstation', group: 'consoles', name: 'PlayStation', tile: 'PlayStation 4 eða 5', sub: 'PlayStation Family appið',
-    setup: 'Sæktu PlayStation Family appið og veldu `Set Up Your Family`. Á PS5: breyttu lykilorðinu úr 0000 og stilltu `Guest Login` á `Not Allowed`.',
+    id: 'playstation', group: 'consoles', name: 'PlayStation', tile: 'PlayStation 4 eða 5', sub: 'PlayStation Family-appið',
+    setup: 'Sæktu PlayStation Family-appið og veldu `Set Up Your Family`. Á PS5: breyttu lykilorðinu úr 0000 og stilltu `Guest Login` á `Not Allowed`.',
+    base: 'Stillingarnar eru í `PlayStation Family → [barn]`.',
     rows: [
-      { key: 'sleep', text: 'PlayStation Family → [barn] → `Playtime`' },
+      { key: 'sleep', text: '`Playtime`' },
       { key: 'approve', text: '`Monthly Spending Limit` (sjálfgefið 0)' },
-      { key: 'age', text: '`Age level`. Ef leikur er lokaður sendir barnið beiðni og þú samþykkir hann undir `Allowed Games`.' },
-      { key: 'chat', text: '`Communication and User-Generated Content` er lokað sjálfgefið. Þú getur leyft spjall í einum leik, t.d. Fortnite, undir `Allowed Games → Communication`.' },
+      { key: 'age', text: '`Age level`. Ef leikur er lokaður sendir barnið beiðni sem þú samþykkir undir `Allowed Games`.' },
+      { key: 'chat', text: '`Communication and User-Generated Content` er sjálfgefið lokað. Þú getur leyft spjall í einstökum leikjum, t.d. Fortnite, undir `Allowed Games → Communication`.' },
     ],
     steps: [
-      'Sæktu PlayStation Family appið, veldu `Sign in → Set Up Your Family` og búðu til barnaaðganginn (7–17 ára).',
-      'Barnið staðfestir netfangið og skráir sig inn á leikjatölvunni.',
-      'Á PS5: `Settings → Family and Parental Controls → PS5 Console Restrictions`. Breyttu lykilorðinu úr 0000 og stilltu `User Creation` og `Guest Login` á `Not Allowed`.',
-      { t: 'Í appinu, undir barninu:', sub: [
-        '`Playtime`: lengd, leyfðir tímar og `Log Out` þegar tíminn klárast',
+      'Búðu til barnaaðgang (7–17 ára) í appinu. Barnið staðfestir netfangið og skráir sig inn á leikjatölvunni.',
+      'Á PS5: `Settings → Family and Parental Controls → PS5 Console Restrictions`. Stilltu líka `User Creation` á `Not Allowed`.',
+      { t: 'Undir `PlayStation Family → [barn]`:', sub: [
+        '`Playtime`: hve lengi og hvenær má spila. `Log Out` þegar tíminn er búinn',
         '`Age level` fyrir leiki',
         '`Communication and User-Generated Content` og `Web Browsing`',
         '`Monthly Spending Limit`',
@@ -197,96 +198,99 @@ const DEVICES: Device[] = [
     src: 'https://www.playstation.com/en-us/support/account/ps-family-app/',
   },
   {
-    id: 'xbox', group: 'consoles', name: 'Xbox', tile: 'Xbox', sub: 'Xbox Family Settings appið',
-    setup: 'Sæktu Xbox Family Settings appið. Á Xbox: `Settings → Account → Family settings → Manage family members → Add to family`. Settu PIN á þinn prófíl.',
+    id: 'xbox', group: 'consoles', name: 'Xbox', tile: 'Xbox', sub: 'Xbox Family Settings-appið',
+    setup: 'Sæktu Xbox Family Settings-appið. Á Xbox: `Settings → Account → Family settings → Manage family members → Add to family`. Settu PIN á þinn eigin prófíl.',
+    base: 'Stillingarnar eru í `Xbox Family Settings → [barn]`.',
     rows: [
-      { key: 'sleep', text: 'Xbox Family Settings → [barn] → `Screen time`' },
+      { key: 'sleep', text: '`Screen time`' },
       { key: 'approve', text: '`Ask to Buy`' },
       { key: 'age', text: '`Content restrictions`' },
       { key: 'chat', text: '`Social` og `Multiplayer`: hverjir mega spjalla og spila við barnið' },
     ],
     good: [
-      'Sami Microsoft-hópur og á Windows. `Use one schedule for all devices` á account.microsoft.com/family sameinar tímann.',
+      'Sami fjölskylduhópur og á Windows. `Use one schedule for all devices` á account.microsoft.com/family: einn tími fyrir Xbox og Windows.',
       'Ef fleiri eru innskráðir gilda stillingar yngsta notandans.',
     ],
     src: 'https://support.xbox.com/en-US/help/family-online-safety/family-settings-app/manage-child-content-in-the-Xbox-Family-Setting-app',
   },
   {
-    id: 'switch', group: 'consoles', name: 'Nintendo Switch', tile: 'Nintendo Switch', sub: 'Switch Parental Controls appið',
-    setup: 'Sæktu Nintendo Switch Parental Controls appið. Það gefur 6 stafa kóða sem þú slærð inn á tölvunni: `System Settings → Parental Controls`.',
+    id: 'switch', group: 'consoles', name: 'Nintendo Switch', tile: 'Nintendo Switch', sub: 'Switch Parental Controls-appið',
+    setup: 'Sæktu Nintendo Switch Parental Controls-appið. Það sýnir 6 stafa kóða sem þú slærð inn á leikjatölvunni í `System Settings → Parental Controls`.',
+    base: 'Stillingarnar eru í appinu, nema kaup.',
     rows: [
-      { key: 'sleep', text: '`Bedtime` og `Play-Time Limit`' },
-      { key: 'approve', text: 'Kaup í eShop: accounts.nintendo.com → `Family group`' },
+      { key: 'sleep', text: '`Play-Time Limit` og `Bedtime`' },
+      { key: 'approve', text: 'Kaup í eShop takmarkar þú á accounts.nintendo.com, undir `Family group`.' },
       { key: 'age', text: '`Restricted Features` (Child, Pre-Teen eða Teen)' },
       { key: 'chat', text: 'GameChat á Switch 2: `GameChat → Set Up Parental Controls`. Þú samþykkir hvern vin.' },
     ],
-    good: ['Flestar stillingar gilda fyrir alla leikjatölvuna, svo stilltu fyrir yngsta spilarann.'],
+    good: ['Flestar stillingar gilda fyrir alla notendur, svo miðaðu við yngsta barnið.'],
     src: 'https://www.nintendo.com/en-gb/Hardware/Nintendo-Switch-Parental-Controls/Nintendo-Switch-2-Nintendo-Switch-Parental-Controls-2873385.html',
   },
   {
     id: 'fortnite', group: 'other', name: 'Fortnite', tile: 'Fortnite', sub: 'Epic Games, á öllum tækjum',
-    setup: 'Barn yngra en 13 ára fær takmarkaðan Epic-aðgang: ekkert spjall og engin kaup. Þú færð tölvupóst frá Epic („Your Child Created an Epic Games Account“), samþykkir, staðfestir aldur þinn og býrð til 6 stafa PIN. Kostar ekkert.',
+    setup: 'Börn yngri en 13 ára geta hvorki spjallað né keypt fyrr en þú samþykkir. Þú færð tölvupóst frá Epic („Your Child Created an Epic Games Account“), staðfestir aldur þinn og býrð til 6 stafa PIN.',
+    base: 'Stillingarnar eru í `Epic Account Portal → Parental Controls`.',
     rows: [
-      { key: 'chat', text: '`Parental Controls → Voice chat` og `Text chat`: veldu `Friends Only`' },
+      { key: 'chat', text: '`Voice chat` og `Text chat`: veldu `Friends Only`' },
       { key: 'approve', text: '`Require PIN to add friends` og PIN á kaup. Kaup í PS Store fara framhjá PIN-inu.' },
-      { key: 'sleep', text: 'Tímamörk á dag eða ákveðna tíma, með vikulegu yfirliti í tölvupósti' },
-      { key: 'age', text: '`Fortnite content rating`: lokar á eyjar yfir aldri sem þú velur. Battle Royale er PEGI 12.' },
+      { key: 'sleep', text: 'Hámark á dag eða fastir leiktímar. Vikulegt yfirlit í tölvupósti.' },
+      { key: 'age', text: '`Fortnite content rating`: lokar á leiki í Fortnite yfir aldrinum sem þú velur. Battle Royale er PEGI 12.' },
     ],
     scenario: {
       title: 'Dæmi: Fortnite og party chat á PlayStation',
       steps: [
-        'PlayStation lokar á spjall í barnaaðgangi. Leyfðu það bara í Fortnite: PlayStation Family → [barn] → `Allowed Games → Communication`. PS Plus þarf ekki.',
+        'PlayStation lokar á spjall í barnaaðgangi. Leyfðu það bara í Fortnite: `PlayStation Family → [barn] → Allowed Games → Communication`. Þú þarft ekki PS Plus.',
         'Barnið opnar Fortnite og tengir PlayStation-aðganginn við Epic. Þú samþykkir í tölvupóstinum frá Epic og býrð til PIN.',
-        'Í Epic `Parental Controls`: `Voice chat` og `Text chat` á `Friends Only`, og `Require PIN to add friends` á.',
+        'Í Epic `Parental Controls`: settu `Voice chat` og `Text chat` á `Friends Only` og kveiktu á `Require PIN to add friends`.',
         'PlayStation-vinir teljast líka vinir í Fortnite, en PIN-ið nær ekki til þeirra. Stilltu því líka `Who can ask to be your friend` á PlayStation.',
-        'Í Fortnite: `Settings → Communication` er slökkt sjálfgefið hjá yngri en 18, svo barnið kveikir á því. Party er `Invite Only`, svo barnið býður vinunum sjálft.',
-        'Fortnite party chat virkar ekki á meðan barnið er í PlayStation Party. Veljið annað hvort.',
+        'Í Fortnite er sjálfgefið slökkt á spjalli hjá yngri en 18 ára. Barnið kveikir á því í `Settings → Communication`. Party er `Invite Only`, svo barnið býður vinunum sjálft.',
+        'Fortnite party chat virkar ekki á meðan barnið er í PlayStation Party.',
       ],
     },
     detailsTitle: 'Allar stillingar í Epic Parental Controls',
     steps: [
-      'Farðu á Epic Account Portal → `Parental Controls`, eða í Fortnite: prófíll → valmynd → `Parental Controls`.',
-      { t: 'Stillingarnar og valkostir:', sub: [
-        '`Voice chat` og `Text chat`, hvort fyrir sig: Everybody, Friends + team members & connections (vinir vina), Friends Only eða Nobody. Undir 10 ára er Friends Only hámarkið',
-        '`Mature language filter`: alltaf á hjá yngri en 13',
+      'Opnaðu `Epic Account Portal → Parental Controls`, eða `Parental Controls` í valmynd prófílsins í Fortnite.',
+      { t: 'Stillingar og valkostir:', sub: [
+        '`Voice chat` og `Text chat`, hvort fyrir sig: `Everybody`, `Friends, team members & connections` (vinir, liðsfélagar og vinir vina), `Friends Only` eða `Nobody`. Hjá yngri en 10 ára er `Friends Only` hámarkið',
+        '`Mature language filter`: alltaf kveikt hjá yngri en 13 ára',
         '`Require PIN to add friends`',
-        'PIN á kaup hjá Epic. Yngri en 13 hafa líka 100 dollara hámark á dag',
-        '`Fortnite content rating`: aldursmörk á eyjar, sér stilling fyrir Creative',
-        'Tímamörk: á dag eða ákveðna tíma, aðvörun þegar 30 mínútur eru eftir, og vikulegt yfirlit',
+        'PIN á kaup hjá Epic. Hjá yngri en 13 ára er líka 100 dollara hámark á dag',
+        '`Fortnite content rating`: aldursmörk á leiki í Fortnite, sérstök stilling fyrir Creative',
+        'Tímamörk: hámark á dag eða fastir leiktímar, aðvörun þegar 30 mínútur eru eftir og vikulegt yfirlit',
         'Spjall við gervigreind í leiknum: `Allow voice and written communication with AI features`',
       ] },
     ],
     good: [
-      '**Heyrir ekki í neinum:** farið úr PlayStation Party og athugið `Mute Game Voice Chat` á PS5.',
-      '**„Voice chat disabled“:** samþykki vantar enn, stillingin er Nobody, spjall er lokað á PlayStation, eða slökkt er á spjalli í stillingum Fortnite.',
-      '**Heyrir í vinum en ekki öðrum í liðinu:** Friends Only virkar eins og það á að gera.',
-      '**Kemst ekki í party:** party er Invite Only, eða slökkt er á `Allow Cross Platform Play` (`Settings → Account and Privacy → Gameplay Privacy`).',
-      '**Kaup:** V-Bucks keypt í PS Store dragast af veski foreldris. `Monthly Spending Limit` á PlayStation er 0 sjálfgefið.',
+      '**Heyrir ekki í neinum:** barnið fer úr PlayStation Party. Athugaðu líka `Mute Game Voice Chat` á PS5.',
+      '**„Voice chat disabled“:** samþykki vantar enn, stillingin er `Nobody`, spjall er lokað á PlayStation, eða slökkt er á spjalli í stillingum Fortnite.',
+      '**Heyrir í vinum en ekki öðrum í liðinu:** þannig á `Friends Only` að virka.',
+      '**Kemst ekki í party:** party er `Invite Only`, eða slökkt er á `Allow Cross Platform Play` (`Settings → Account and Privacy → Gameplay Privacy`).',
+      '**Kaup:** V-Bucks keypt í PS Store dragast af veski foreldris. `Monthly Spending Limit` á PlayStation er sjálfgefið 0.',
       'Tímamörk á PlayStation og í Fortnite eru aðskilin.',
     ],
     src: 'https://safety.epicgames.com/en-US/parental-controls',
   },
   {
     id: 'apps', group: 'other', name: 'Önnur öpp', tile: 'Önnur öpp', sub: 'YouTube, TikTok, Snapchat, Roblox o.fl.',
-    setup: 'Stillingar símans ná ekki inn í öppin. Flest hafa eigin tengingu fyrir foreldra, sem sýnir hverjum barnið talar við en ekki hvað það segir.',
+    setup: 'Stillingar símans ná ekki inn í öppin. Flest eru með eigin foreldrastillingar sem sýna við hverja barnið talar, en ekki hvað það segir.',
     rows: [],
-    table: [
-      ['YouTube', 'https://www.youtube.com/myfamily/', '13+ (yngri: YouTube Kids)', '`Family Link → YouTube`, eða families.youtube.com'],
+    apps: [
+      ['YouTube', 'https://www.youtube.com/myfamily/', '13+ (yngri: YouTube Kids)', '`Family Link → [barn] → Controls → YouTube`, eða families.youtube.com'],
       ['TikTok', 'https://www.tiktok.com/safety/en/guardians-guide', '13+', '`Settings and privacy → Family Pairing`, á báðum símum'],
       ['Snapchat', 'https://help.snapchat.com/hc/en-us/articles/8132784476820-How-do-I-add-my-teen-to-Family-Center', '13+', '`Family Center`. Barnið verður að samþykkja boðið'],
       ['Instagram', 'https://familycenter.meta.com/supervision/', '13+', 'Unglingaaðgangur er sjálfgefinn. `Supervision` í Meta Family Center'],
-      ['Roblox', 'https://about.roblox.com/parents/', 'Kids 5–8, Select 9–15', '`Settings → Parental Controls → Add parent`, á aðgangi barnsins'],
+      ['Roblox', 'https://about.roblox.com/parents/', 'Kids 5–8, Select 9–15 ára', '`Settings → Parental Controls → Add parent`, á aðgangi barnsins'],
       ['Discord', 'https://discord.com/safety/family-center-is-getting-an-update', '13+', '`User Settings → Family Center`, á báðum aðgöngum'],
-      ['Netflix', 'https://help.netflix.com/en/node/114275', 'Kids prófíll', '`Account → Profiles → Adjust parental controls`'],
+      ['Netflix', 'https://help.netflix.com/en/node/114275', 'Kids-prófíll', '`Account → Profiles → Adjust parental controls`'],
     ],
   },
   {
-    id: 'net', group: 'other', name: 'Heimanetið', tile: 'Heimanetið', sub: 'Sía á netbeininum',
-    setup: 'Ein stilling á netbeininum síar allt sem tengist heima, líka tæki gesta. Hún nær ekki til 4G/5G.',
+    id: 'net', group: 'other', name: 'Heimanetið', tile: 'Heimanetið', sub: 'Sía fyrir allt heimanetið',
+    setup: 'Sían nær til allra tækja á heimanetinu, líka tækja gesta, en ekki síma á 4G/5G.',
     rows: [
       { key: 'net', text: '**Síminn**: kveiktu á [Netvaranum](https://adstod.siminn.is/home/netvarinn) á Þjónustuvefnum og veldu Netvara 2. Ókeypis.' },
       { key: 'net', text: '**Nova**: [eero Secure](https://support.nova.is/hc/is/articles/46932394468369-hva%C3%B0-er-eero-secure) fylgir eero-beininum, með efnissíu og tímaáætlun.' },
-      { key: 'net', text: '**Aðrir**: settu `1.1.1.3` og `1.0.0.3` (Cloudflare for Families) í DNS-reitina á netbeininum. Ekki ef þú notar Netvarann.' },
+      { key: 'net', text: '**Aðrir**: settu `1.1.1.3` og `1.0.0.3` (Cloudflare for Families) í DNS-reitina á netbeininum. Ef þú ert hjá Símanum, notaðu frekar Netvarann.' },
     ],
   },
 ];
@@ -313,8 +317,8 @@ const hasDetails = (d: Device) => !!(d.steps || d.notes || d.monitor || d.good);
     <title>Netöryggi barna: stillingar fyrir foreldra</title>
     <meta name="description" content="Hakaðu við tækin sem barnið notar og fáðu stuttar leiðbeiningar um foreldrastillingar á iPhone, Android, tölvum, PlayStation, Xbox, Switch og Fortnite." />
     <meta property="og:title" content="Netöryggi barna" />
-    <meta property="og:description" content="Foreldrastillingar tæki fyrir tæki: svefntími, samþykki, aldursmörk og spjall." />
-    <meta property="og:url" content="https://lettfeti.com/netoryggi" />
+    <meta property="og:description" content="Foreldrastillingar tæki fyrir tæki: skjátími, samþykki, aldursmörk og spjall." />
+    <meta property="og:url" content="https://www.lettfeti.com/netoryggi" />
     <meta property="og:type" content="website" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <script is:inline>document.documentElement.classList.add('js');</script>
@@ -356,6 +360,7 @@ const hasDetails = (d: Device) => !!(d.steps || d.notes || d.monitor || d.good);
       main > * { min-width: 0; }
       a { color: var(--accent); text-underline-offset: 2px; }
       a:focus-visible, button:focus-visible, summary:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; border-radius: 6px; }
+      .print-only { display: none; }
 
       .back { font-size: 0.875rem; font-weight: 500; color: var(--muted); text-decoration: none; }
       .top { display: grid; gap: 14px; }
@@ -411,7 +416,9 @@ const hasDetails = (d: Device) => !!(d.steps || d.notes || d.monitor || d.good);
       .src { font-size: 0.875rem; font-weight: 500; white-space: nowrap; }
       .setup { display: flex; gap: 10px; align-items: flex-start; background: var(--accent-soft); border-radius: 12px; padding: 12px 14px; }
       .setup .tag { flex: none; font-size: 0.75rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--accent-ink); padding-top: 2px; }
-      .setup p { margin: 0; min-width: 0; }
+      .setup > div { display: grid; gap: 6px; min-width: 0; }
+      .setup p { margin: 0; }
+      .setup .base { font-weight: 600; color: var(--accent-ink); }
 
       .rows { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
       .row { display: grid; grid-template-columns: 28px 1fr; gap: 2px 12px; align-items: start; }
@@ -420,6 +427,13 @@ const hasDetails = (d: Device) => !!(d.steps || d.notes || d.monitor || d.good);
       .row .val { font-size: 0.9375rem; line-height: 1.5; min-width: 0; }
 
       code { font-family: var(--font-mono); font-size: 0.82em; background: var(--code-bg); border: 1px solid var(--line); border-radius: 5px; padding: 0.06em 0.36em; color: var(--ink); overflow-wrap: break-word; }
+
+      .apps { list-style: none; margin: 0; padding: 0; display: grid; gap: 0; border-top: 1px solid var(--line); }
+      .apps li { display: grid; grid-template-columns: minmax(92px, 9rem) 1fr; gap: 2px 14px; padding: 10px 0; border-bottom: 1px solid var(--line); font-size: 0.9375rem; }
+      .apps .nm { display: grid; align-content: start; }
+      .apps .nm a { font-weight: 600; }
+      .apps .age { font-size: 0.8125rem; color: var(--muted); line-height: 1.35; }
+      .apps .where { min-width: 0; }
 
       .scenario { border: 1.5px solid var(--chat-soft); background: var(--surface); border-radius: 14px; padding: 14px 16px; display: grid; gap: 10px; }
       .scenario h4 { margin: 0; font-size: 1rem; font-weight: 700; color: var(--chat); }
@@ -439,13 +453,6 @@ const hasDetails = (d: Device) => !!(d.steps || d.notes || d.monitor || d.good);
       .det { display: grid; gap: 12px; margin-top: 14px; }
       .det h4 { margin: 4px 0 0; font-size: 0.75rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent-ink); }
       .note { margin: 0; font-size: 0.875rem; color: var(--muted); }
-
-      .tbl { overflow-x: auto; border: 1px solid var(--line); border-radius: 12px; }
-      table { border-collapse: collapse; width: 100%; min-width: 540px; font-size: 0.9375rem; }
-      th, td { text-align: left; vertical-align: top; padding: 10px 12px; border-bottom: 1px solid var(--line); }
-      tr:last-child td { border-bottom: 0; }
-      th { font-size: 0.75rem; font-weight: 600; letter-spacing: 0.07em; text-transform: uppercase; color: var(--muted); background: var(--code-bg); }
-      td:first-child { font-weight: 600; white-space: nowrap; }
 
       .contact { background: var(--accent-soft); border-radius: 16px; padding: clamp(18px, 3.4vw, 26px); display: grid; gap: 6px; }
       .contact p { margin: 0; }
@@ -470,15 +477,18 @@ const hasDetails = (d: Device) => !!(d.steps || d.notes || d.monitor || d.good);
       @media (max-width: 520px) {
         .actions { width: 100%; }
         .actions .btn { flex: 1; }
+        .apps li { grid-template-columns: 1fr; }
+        .apps .nm { display: flex; flex-wrap: wrap; gap: 0 8px; align-items: baseline; }
       }
 
       @media print {
         body { background: #fff; padding: 0; }
         main { padding: 0; gap: 18px; max-width: none; }
-        .back, .picker-sec, .bar, .legend, .lead, .src, summary, .empty { display: none !important; }
+        .back, .picker-sec, .bar, .legend, .lead, .src, summary, .empty, .sec-head p { display: none !important; }
+        .print-only { display: block; margin: 0; font-size: 0.875rem; color: var(--muted); }
         .card { box-shadow: none; border: 1px solid #ccc; break-inside: auto; }
-        .row, ol.steps > li, .setup, .scenario { break-inside: avoid; }
-        .card h3 { break-after: avoid; }
+        .row, ol.steps > li, .setup, .scenario, .apps li { break-inside: avoid; }
+        h3, h4, .c-head { break-after: avoid; }
         details { border: 0; padding: 0; }
         .det { margin-top: 0; }
         a { color: inherit; text-decoration: none; }
@@ -493,7 +503,8 @@ const hasDetails = (d: Device) => !!(d.steps || d.notes || d.monitor || d.good);
       <header class="top">
         <p class="eyebrow">Fyrir foreldra · október 2026</p>
         <h1>Netöryggi barna</h1>
-        <p class="lead">Hakaðu við tækin og leikina sem barnið notar. Fyrir hvert tæki færðu nákvæmlega hvar stillingarnar eru sem skipta mestu.</p>
+        <p class="print-only">www.lettfeti.com/netoryggi</p>
+        <p class="lead">Hakaðu við tækin og leikina sem barnið notar. Fyrir hvert tæki sérðu hvar mikilvægustu stillingarnar eru.</p>
         <ul class="legend" aria-label="Stillingarnar">
           {['sleep', 'approve', 'age', 'chat'].map((k) => (
             <li class={`k-${k}`}><span class="badge" set:html={ICONS[k]} />{LABELS[k]}</li>
@@ -532,7 +543,7 @@ const hasDetails = (d: Device) => !!(d.steps || d.notes || d.monitor || d.good);
       <section class="sec" aria-labelledby="h-res">
         <div class="sec-head">
           <h2 id="h-res">2. Stillingarnar</h2>
-          <p>Valmyndir eru á ensku, eins og á flestum tækjum.</p>
+          <p>Valmyndir eru á ensku. [barn] er nafn barnsins.</p>
         </div>
         <div id="cards">
           <div class="empty" id="empty" hidden><strong>Ekkert valið enn</strong>Hakaðu við tækin hér að ofan.</div>
@@ -546,7 +557,13 @@ const hasDetails = (d: Device) => !!(d.steps || d.notes || d.monitor || d.good);
                 {d.src && <a class="src" href={d.src} target="_blank" rel="noopener">Opinberar leiðbeiningar ↗</a>}
               </div>
 
-              <div class="setup"><span class="tag">Fyrst</span><p set:html={md(d.setup)} /></div>
+              <div class="setup">
+                <span class="tag">Fyrst</span>
+                <div>
+                  <p set:html={md(d.setup)} />
+                  {d.base && <p class="base" set:html={md(d.base)} />}
+                </div>
+              </div>
 
               {d.rows.length > 0 && (
                 <ul class="rows">
@@ -560,17 +577,15 @@ const hasDetails = (d: Device) => !!(d.steps || d.notes || d.monitor || d.good);
                 </ul>
               )}
 
-              {d.table && (
-                <div class="tbl">
-                  <table>
-                    <thead><tr><th scope="col">App</th><th scope="col">Aldur</th><th scope="col">Hvar</th></tr></thead>
-                    <tbody>
-                      {d.table.map((r) => (
-                        <tr><td><a href={r[1]} target="_blank" rel="noopener">{r[0]}</a></td><td>{r[2]}</td><td set:html={md(r[3])} /></tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
+              {d.apps && (
+                <ul class="apps">
+                  {d.apps.map((a) => (
+                    <li>
+                      <span class="nm"><a href={a[1]} target="_blank" rel="noopener">{a[0]}</a><span class="age">{a[2]}</span></span>
+                      <span class="where" set:html={md(a[3])} />
+                    </li>
+                  ))}
+                </ul>
               )}
 
               {d.scenario && (
@@ -620,7 +635,7 @@ const hasDetails = (d: Device) => !!(d.steps || d.notes || d.monitor || d.good);
           <p><a href="https://netvis.is/foreldrar/" target="_blank" rel="noopener">netvis.is/foreldrar</a></p>
         </div>
         <p>Í neyð: hringdu í <strong>112</strong>.</p>
-        <p class="fine">Byggt á opinberum leiðbeiningum Apple, Google, Microsoft, Sony, Nintendo og Epic í október 2026. Heiti í valmyndum geta breyst með uppfærslum.</p>
+        <p class="fine">Byggt á opinberum leiðbeiningum framleiðenda í október 2026. Heiti í valmyndum geta breyst með uppfærslum.</p>
       </section>
     </main>
 
@@ -699,7 +714,7 @@ const hasDetails = (d: Device) => !!(d.steps || d.notes || d.monitor || d.good);
           opened = [];
         });
         document.getElementById('print').addEventListener('click', function () {
-          status('Veldu „Vista sem PDF“ í prentglugganum til að vista.');
+          status('Veldu „Save as PDF“ (Vista sem PDF) í prentglugganum.');
           window.print();
         });
 
