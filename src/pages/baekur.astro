@@ -97,6 +97,10 @@ const clientId = import.meta.env.PUBLIC_GOOGLE_CLIENT_ID ?? '';
       .btn.ghost { color: var(--ink); border: 2px solid rgba(255, 207, 74, .7); }
       .btn:hover { transform: translateY(-2px); }
       .btn:focus-visible { outline: 3px solid #fff; outline-offset: 3px; }
+      .btn .ico { font-size: .8em; }
+      button.btn { border: 0; cursor: pointer; font-family: inherit; }
+      button.btn.ghost { background: transparent; }
+      .player { width: 100%; max-width: 320px; margin-top: 12px; }
       .note { text-align: center; color: var(--muted); font-size: .85rem; opacity: .8; margin-top: 8px; }
       [hidden] { display: none !important; }
 
@@ -145,19 +149,37 @@ const clientId = import.meta.env.PUBLIC_GOOGLE_CLIENT_ID ?? '';
           data.baekur.forEach(function (b) {
             var item = el('article', 'item');
             var stand = el('div', 'stand');
-            var first = (b.utgafur && b.utgafur[0]) ? b.utgafur[0].pdf : '#';
-            var cover = el('a', 'cover'); cover.href = first; cover.target = '_blank'; cover.rel = 'noopener';
-            cover.setAttribute('aria-label', 'Opna ' + b.titill);
+            var utg = b.utgafur || [];
+            var firstPdf = utg.filter(function (u) { return u.pdf; })[0];
+            var cover = el('a', 'cover'); cover.href = firstPdf ? firstPdf.pdf : '#';
+            if (firstPdf) { cover.target = '_blank'; cover.rel = 'noopener'; }
+            cover.setAttribute('aria-label', (firstPdf ? 'Opna ' : 'Hlusta á ') + b.titill);
             var img = el('img'); img.src = b.kapa; img.alt = ''; img.decoding = 'async';
             cover.append(img); stand.append(cover);
             var info = el('div', 'info');
             info.append(el('h2', '', b.titill));
             if (b.lysing) info.append(el('p', '', b.lysing));
             var btns = el('div', 'btns');
-            (b.utgafur || []).forEach(function (u, i) {
-              var a = el('a', 'btn ' + (i === 0 ? 'primary' : 'ghost'), u.heiti);
-              a.href = u.pdf; a.target = '_blank'; a.rel = 'noopener';
-              btns.append(a);
+            var player = null;
+            function play(u, btn) {
+              // One player per book, created on first tap (audio only starts from a tap anyway).
+              if (!player) { player = el('audio', 'player'); player.controls = true; player.preload = 'none'; info.append(player); }
+              if (player.dataset.src !== u.hljod) { player.dataset.src = u.hljod; player.src = u.hljod; }
+              if (player.paused) player.play().catch(function () {}); else player.pause();
+            }
+            utg.forEach(function (u, i) {
+              var cls = 'btn ' + (i === 0 ? 'primary' : 'ghost');
+              if (u.hljod) {
+                var bt = el('button', cls); bt.type = 'button';
+                bt.append(el('span', 'ico', '▶'), document.createTextNode(u.heiti));
+                bt.onclick = function () { play(u, bt); };
+                btns.append(bt);
+                if (!firstPdf && i === 0) cover.onclick = function (ev) { ev.preventDefault(); play(u, bt); };
+              } else {
+                var a = el('a', cls, u.heiti);
+                a.href = u.pdf; a.target = '_blank'; a.rel = 'noopener';
+                btns.append(a);
+              }
             });
             info.append(btns);
             item.append(stand, info);

@@ -3,7 +3,8 @@
 // 1. Verifies the ID token with Google (audience = GOOGLE_CLIENT_ID, verified e-mail).
 // 2. Checks the e-mail against BAEKUR_NETFONG (comma-separated allowlist).
 // 3. Returns the shelf: titles and files live in a PRIVATE Vercel Blob store
-//    (baekur/listi.json + the PDFs/covers), handed out as links that expire in 2 hours.
+//    (baekur/listi.json + the PDFs/audio/covers), handed out as links that expire in 2 hours.
+//    Each entry in utgafur has a `pdf` (opens in a new tab) or `hljod` (audio, played in the page).
 // Nothing about the books is in this (public) repo.
 import { get, issueSignedToken, presignUrl } from "@vercel/blob";
 import { createHmac, timingSafeEqual } from "node:crypto";
@@ -73,7 +74,11 @@ export async function shelf() {
     titill: b.titill,
     lysing: b.lysing,
     kapa: await sign(b.kapa),
-    utgafur: await Promise.all((b.utgafur || []).map(async (u) => ({ heiti: u.heiti, pdf: await sign(u.pdf) }))),
+    utgafur: await Promise.all((b.utgafur || []).map(async (u) => ({
+      heiti: u.heiti,
+      ...(u.pdf ? { pdf: await sign(u.pdf) } : {}),
+      ...(u.hljod ? { hljod: await sign(u.hljod) } : {}),
+    }))),
   })));
 }
 
