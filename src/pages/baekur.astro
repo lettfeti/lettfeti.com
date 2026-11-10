@@ -1,0 +1,101 @@
+---
+// Private bookshelf. The page itself is generic: no titles, names or file links.
+// "Sign in with Google" → /api/baekur checks the e-mail against an allowlist and
+// returns the books with links that expire in two hours.
+const clientId = import.meta.env.PUBLIC_GOOGLE_CLIENT_ID ?? '';
+---
+<!doctype html>
+<html lang="is">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>Bókahillan</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <style>
+      :root { --bg: #fbf7ef; --card: #ffffff; --ink: #24304a; --muted: #6b7489; --accent: #1f6fa8; --line: #e8e1d2; }
+      @media (prefers-color-scheme: dark) {
+        :root { --bg: #151a24; --card: #1e2532; --ink: #e9edf5; --muted: #a3acbd; --accent: #6cb6ec; --line: #2c3545; }
+      }
+      * { box-sizing: border-box; }
+      body { margin: 0; background: var(--bg); color: var(--ink); font: 17px/1.5 Georgia, 'Times New Roman', serif; }
+      main { max-width: 960px; margin: 0 auto; padding: 48px max(16px, env(safe-area-inset-left, 0px)) 64px max(16px, env(safe-area-inset-right, 0px)); }
+      h1 { font-size: 2.1rem; margin: 0 0 .3rem; letter-spacing: -.01em; }
+      .lead { color: var(--muted); margin: 0 0 2rem; }
+      #signin { min-height: 44px; }
+      .msg { margin-top: 1rem; color: #b3412f; }
+      .who { color: var(--muted); font-size: .9rem; margin: 0 0 1.6rem; }
+      .who button { background: none; border: 0; color: var(--accent); cursor: pointer; font: inherit; padding: 0; text-decoration: underline; }
+      .shelf { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 24px; }
+      .book { background: var(--card); border: 1px solid var(--line); border-radius: 14px; overflow: hidden; display: flex; flex-direction: column; }
+      .book img { width: 100%; aspect-ratio: 210 / 260; object-fit: cover; object-position: top; display: block; background: var(--line); }
+      .book .txt { padding: 14px 16px 16px; display: flex; flex-direction: column; gap: 4px; flex: 1; }
+      .book h2 { font-size: 1.15rem; margin: 0; line-height: 1.25; }
+      .book p { margin: 0; color: var(--muted); font-size: .92rem; }
+      .book a { margin-top: auto; align-self: flex-start; background: var(--accent); color: #fff; text-decoration: none; padding: 8px 16px;
+                border-radius: 999px; font-size: .95rem; margin-top: 12px; }
+      .book a:focus-visible { outline: 3px solid var(--ink); outline-offset: 2px; }
+      .note { color: var(--muted); font-size: .85rem; margin-top: 2rem; }
+      [hidden] { display: none !important; }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>Bókahillan</h1>
+      <p class="lead" id="lead">Skráðu þig inn með Google til að sjá bækurnar.</p>
+      <div id="signin" data-client={clientId}></div>
+      <p class="msg" id="msg" hidden></p>
+      <p class="who" id="who" hidden></p>
+      <section class="shelf" id="shelf" hidden></section>
+      <p class="note" id="note" hidden>Tenglarnir gilda í tvær klukkustundir. Endurhlaðið síðuna til að fá nýja.</p>
+    </main>
+    <script is:inline>
+      (function () {
+        var el = document.getElementById('signin');
+        var clientId = el.dataset.client;
+        var msg = document.getElementById('msg');
+        function say(t) { msg.textContent = t; msg.hidden = !t; }
+        if (!clientId) { say('Innskráningin er ekki tilbúin enn.'); return; }
+
+        function show(data) {
+          var shelf = document.getElementById('shelf');
+          shelf.innerHTML = '';
+          data.baekur.forEach(function (b) {
+            var card = document.createElement('article'); card.className = 'book';
+            var img = document.createElement('img'); img.src = b.kapa; img.alt = ''; img.loading = 'lazy';
+            var txt = document.createElement('div'); txt.className = 'txt';
+            var h = document.createElement('h2'); h.textContent = b.titill;
+            var p = document.createElement('p'); p.textContent = b.undirtitill;
+            var a = document.createElement('a'); a.href = b.pdf; a.target = '_blank'; a.rel = 'noopener'; a.textContent = 'Opna bókina';
+            txt.append(h, p, a); card.append(img, txt); shelf.append(card);
+          });
+          var who = document.getElementById('who');
+          who.textContent = 'Innskráð: ' + data.netfang + ' · ';
+          var out = document.createElement('button'); out.type = 'button'; out.textContent = 'Skrá út';
+          out.onclick = function () { google.accounts.id.disableAutoSelect(); location.reload(); };
+          who.append(out);
+          el.hidden = true; document.getElementById('lead').hidden = true;
+          who.hidden = false; shelf.hidden = false; document.getElementById('note').hidden = false;
+        }
+
+        function onCredential(resp) {
+          say('');
+          fetch('/api/baekur', { method: 'POST', headers: { 'Content-Type': 'application/json' },
+                                 body: JSON.stringify({ credential: resp.credential }) })
+            .then(function (r) { return r.json().then(function (j) { return { ok: r.ok, j: j }; }); })
+            .then(function (x) { if (x.ok) show(x.j); else say(x.j.error || 'Eitthvað fór úrskeiðis.'); })
+            .catch(function () { say('Gat ekki tengst. Reyndu aftur.'); });
+        }
+
+        function init() {
+          if (!window.google || !google.accounts) return setTimeout(init, 100);
+          google.accounts.id.initialize({ client_id: clientId, callback: onCredential, auto_select: true });
+          google.accounts.id.renderButton(el, { theme: 'outline', size: 'large', shape: 'pill', text: 'signin_with', locale: 'is' });
+          google.accounts.id.prompt();
+        }
+        init();
+      })();
+    </script>
+  </body>
+</html>
