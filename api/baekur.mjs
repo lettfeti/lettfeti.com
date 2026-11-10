@@ -6,11 +6,40 @@
 //    (baekur/listi.json + the PDFs/covers), handed out as links that expire in 2 hours.
 // Nothing about the books is in this (public) repo.
 import { get, issueSignedToken, presignUrl } from "@vercel/blob";
+import { createHmac, timingSafeEqual } from "node:crypto";
 
 export const config = { maxDuration: 15 };
 
 const VALID_MS = 2 * 60 * 60 * 1000;
 const ISSUERS = new Set(["accounts.google.com", "https://accounts.google.com"]);
+const COOKIE = "baekur_s";
+const SESSION_DAYS = 30;
+
+// Session cookie after the first Google sign-in, so returning visitors skip the button.
+// Value: base64url(JSON {e: email, x: expiry ms}) + "." + HMAC-SHA256 (BAEKUR_SESSION_SECRET).
+function sign(payload) {
+  return createHmac("sha256", process.env.BAEKUR_SESSION_SECRET || "").update(payload).digest("base64url");
+}
+function makeSession(email) {
+  const payload = Buffer.from(JSON.stringify({ e: email, x: Date.now() + SESSION_DAYS * 864e5 })).toString("base64url");
+  return `${payload}.${sign(payload)}`;
+}
+function readSession(req) {
+  if (!process.env.BAEKUR_SESSION_SECRET) return null;
+  const raw = (req.headers.cookie || "").split(/;\s*/).find((c) => c.startsWith(COOKIE + "="));
+  if (!raw) return null;
+  const [payload, mac] = raw.slice(COOKIE.length + 1).split(".");
+  if (!payload || !mac) return null;
+  const want = Buffer.from(sign(payload)), got = Buffer.from(mac);
+  if (want.length !== got.length || !timingSafeEqual(want, got)) return null;
+  try {
+    const s = JSON.parse(Buffer.from(payload, "base64url").toString());
+    return s.x > Date.now() ? String(s.e) : null;
+  } catch { return null; }
+}
+function cookie(value, maxAge) {
+  return `${COOKIE}=${value}; Path=/api/baekur; HttpOnly; Secure; SameSite=Lax; Max-Age=${maxAge}`;
+}
 
 async function verifiedEmail(credential) {
   const r = await fetch(`https://oauth2.googleapis.com/tokeninfo?id_token=${encodeURIComponent(credential)}`);
@@ -53,12 +82,27 @@ export default async function handler(req, res) {
   res.setHeader("X-Robots-Tag", "noindex, nofollow");
   if (req.method !== "POST") return res.status(405).json({ error: "Notaðu POST." });
 
-  const credential = req.body && req.body.credential;
-  if (!credential) return res.status(400).json({ error: "Vantar innskráningu." });
+  const body = req.body || {};
+  if (body.logout) {
+    res.setHeader("Set-Cookie", cookie("", 0));
+    return res.status(200).json({ ok: true });
+  }
 
-  const email = await verifiedEmail(credential).catch(() => null);
-  if (!email) return res.status(401).json({ error: "Innskráning tókst ekki. Reyndu aftur." });
-  if (!isAllowed(email)) return res.status(403).json({ error: `${email} hefur ekki aðgang.` });
+  let email = null;
+  if (body.credential) {
+    email = await verifiedEmail(body.credential).catch(() => null);
+    if (!email) return res.status(401).json({ error: "Innskráning tókst ekki. Reyndu aftur." });
+  } else {
+    email = readSession(req);
+    if (!email) return res.status(401).json({ error: "", session: false });
+  }
+  if (!isAllowed(email)) {
+    res.setHeader("Set-Cookie", cookie("", 0));
+    return res.status(403).json({ error: `${email} hefur ekki aðgang.` });
+  }
+  if (body.credential && process.env.BAEKUR_SESSION_SECRET) {
+    res.setHeader("Set-Cookie", cookie(makeSession(email), SESSION_DAYS * 86400));
+  }
 
   try {
     return res.status(200).json({ netfang: email, baekur: await shelf() });

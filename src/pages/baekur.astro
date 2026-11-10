@@ -166,7 +166,11 @@ const clientId = import.meta.env.PUBLIC_GOOGLE_CLIENT_ID ?? '';
           var who = document.getElementById('who');
           who.textContent = 'Innskráð: ' + data.netfang + ' · ';
           var out = el('button', '', 'Skrá út'); out.type = 'button';
-          out.onclick = function () { try { google.accounts.id.disableAutoSelect(); } catch (e) {} location.reload(); };
+          out.onclick = function () {
+            try { google.accounts.id.disableAutoSelect(); } catch (e) {}
+            fetch('/api/baekur', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ logout: true }) })
+              .finally(function () { location.reload(); });
+          };
           who.append(out);
           document.getElementById('gate').hidden = true;
           who.hidden = false; shelf.hidden = false; document.getElementById('note').hidden = false;
@@ -188,7 +192,19 @@ const clientId = import.meta.env.PUBLIC_GOOGLE_CLIENT_ID ?? '';
           google.accounts.id.renderButton(signin, { theme: 'filled_black', size: 'large', shape: 'pill', text: 'signin_with', locale: 'is' });
           google.accounts.id.prompt();
         }
-        init();
+
+        // Already signed in on this device? The session cookie opens the shelf without any click.
+        var gate = document.getElementById('gate');
+        gate.style.visibility = 'hidden';
+        fetch('/api/baekur', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: '{}' })
+          .then(function (r) { return r.json().then(function (j) { return { ok: r.ok, j: j }; }); })
+          .then(function (x) {
+            if (x.ok) { show(x.j); return; }
+            gate.style.visibility = '';
+            if (x.j && x.j.error) say(x.j.error);
+            init();
+          })
+          .catch(function () { gate.style.visibility = ''; init(); });
       })();
     </script>
   </body>
