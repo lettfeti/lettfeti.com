@@ -8,76 +8,170 @@ const clientId = import.meta.env.PUBLIC_GOOGLE_CLIENT_ID ?? '';
 <html lang="is">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <meta name="robots" content="noindex, nofollow" />
     <title>Bókahillan</title>
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,600;0,9..144,900;1,9..144,600&family=Nunito:wght@500;700;800&display=swap" rel="stylesheet" />
     <script src="https://accounts.google.com/gsi/client" async defer></script>
-    <style>
-      :root { --bg: #fbf7ef; --card: #ffffff; --ink: #24304a; --muted: #6b7489; --accent: #1f6fa8; --line: #e8e1d2; }
-      @media (prefers-color-scheme: dark) {
-        :root { --bg: #151a24; --card: #1e2532; --ink: #e9edf5; --muted: #a3acbd; --accent: #6cb6ec; --line: #2c3545; }
+    <style is:global>
+      :root {
+        --sky1: #0d1330; --sky2: #2a1b4a; --sky3: #5b2a5e;
+        --ink: #fff8ec; --muted: #c9c2e0; --gold: #ffcf4a; --gold2: #ff9f2e;
+        --wood1: #8a5a32; --wood2: #6b4223; --wood3: #4b2d17;
       }
       * { box-sizing: border-box; }
-      body { margin: 0; background: var(--bg); color: var(--ink); font: 17px/1.5 Georgia, 'Times New Roman', serif; }
-      main { max-width: 960px; margin: 0 auto; padding: 48px max(16px, env(safe-area-inset-left, 0px)) 64px max(16px, env(safe-area-inset-right, 0px)); }
-      h1 { font-size: 2.1rem; margin: 0 0 .3rem; letter-spacing: -.01em; }
-      .lead { color: var(--muted); margin: 0 0 2rem; }
-      #signin { min-height: 44px; }
-      .msg { margin-top: 1rem; color: #b3412f; }
-      .who { color: var(--muted); font-size: .9rem; margin: 0 0 1.6rem; }
-      .who button { background: none; border: 0; color: var(--accent); cursor: pointer; font: inherit; padding: 0; text-decoration: underline; }
-      .shelf { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 24px; }
-      .book { background: var(--card); border: 1px solid var(--line); border-radius: 14px; overflow: hidden; display: flex; flex-direction: column; }
-      .book img { width: 100%; aspect-ratio: 210 / 260; object-fit: cover; object-position: top; display: block; background: var(--line); }
-      .book .txt { padding: 14px 16px 16px; display: flex; flex-direction: column; gap: 4px; flex: 1; }
-      .book h2 { font-size: 1.15rem; margin: 0; line-height: 1.25; }
-      .book p { margin: 0; color: var(--muted); font-size: .92rem; }
-      .book a { margin-top: auto; align-self: flex-start; background: var(--accent); color: #fff; text-decoration: none; padding: 8px 16px;
-                border-radius: 999px; font-size: .95rem; margin-top: 12px; }
-      .book a:focus-visible { outline: 3px solid var(--ink); outline-offset: 2px; }
-      .note { color: var(--muted); font-size: .85rem; margin-top: 2rem; }
+      html { background: var(--sky1); }
+      body {
+        margin: 0; min-height: 100vh; color: var(--ink);
+        font: 500 17px/1.5 'Nunito', system-ui, sans-serif;
+        background:
+          radial-gradient(1.5px 1.5px at 12% 18%, #fff 50%, transparent 51%),
+          radial-gradient(1px 1px at 28% 72%, #fff 50%, transparent 51%),
+          radial-gradient(2px 2px at 44% 12%, #fff6c8 50%, transparent 51%),
+          radial-gradient(1px 1px at 63% 34%, #fff 50%, transparent 51%),
+          radial-gradient(1.5px 1.5px at 78% 9%, #fff 50%, transparent 51%),
+          radial-gradient(1px 1px at 88% 58%, #fff 50%, transparent 51%),
+          radial-gradient(1.5px 1.5px at 7% 52%, #fff6c8 50%, transparent 51%),
+          radial-gradient(1px 1px at 52% 88%, #fff 50%, transparent 51%),
+          radial-gradient(1px 1px at 94% 82%, #fff 50%, transparent 51%),
+          radial-gradient(1200px 600px at 50% -10%, rgba(255, 190, 90, .18), transparent 60%),
+          linear-gradient(170deg, var(--sky1) 0%, var(--sky2) 55%, var(--sky3) 100%);
+        background-attachment: fixed;
+      }
+      main { max-width: 1040px; margin: 0 auto;
+             padding: 56px max(18px, env(safe-area-inset-right, 0px)) 72px max(18px, env(safe-area-inset-left, 0px)); }
+      header { text-align: center; margin-bottom: 40px; }
+      .moon { font-size: 44px; line-height: 1; filter: drop-shadow(0 0 18px rgba(255, 207, 74, .55)); }
+      h1 { font-family: 'Fraunces', Georgia, serif; font-weight: 900; font-size: clamp(2.6rem, 7vw, 4.4rem);
+           letter-spacing: -.02em; margin: 10px 0 4px; line-height: 1;
+           background: linear-gradient(180deg, #fff6d8 0%, var(--gold) 60%, var(--gold2) 100%);
+           -webkit-background-clip: text; background-clip: text; color: transparent;
+           text-shadow: 0 6px 40px rgba(255, 180, 60, .25); }
+      .tag { font-family: 'Fraunces', Georgia, serif; font-style: italic; color: var(--muted); font-size: 1.15rem; margin: 0; }
+
+      #gate { display: flex; flex-direction: column; align-items: center; gap: 18px; margin-top: 8px; }
+      .gatecard { background: rgba(255, 255, 255, .07); border: 1px solid rgba(255, 255, 255, .14); backdrop-filter: blur(6px);
+                  border-radius: 22px; padding: 26px 28px; text-align: center; max-width: 420px; }
+      .gatecard p { margin: 0 0 16px; color: var(--muted); }
+      #signin { display: flex; justify-content: center; min-height: 44px; }
+      .msg { color: #ffb4a8; text-align: center; margin: 14px 0 0; }
+
+      .who { text-align: center; color: var(--muted); font-size: .95rem; margin: -18px 0 34px; }
+      .who button { background: none; border: 0; padding: 0; color: var(--gold); font: inherit; font-weight: 800; cursor: pointer; }
+      .who button:hover { text-decoration: underline; }
+
+      .shelf { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 0; }
+      .item { display: flex; flex-direction: column; min-width: 0; }
+      .stand { position: relative; height: 380px; display: flex; align-items: flex-end; justify-content: center;
+               padding: 0 24px 22px; perspective: 1400px; }
+      .stand::after { content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 26px;
+                      background: linear-gradient(180deg, #b07a47 0%, var(--wood1) 18%, var(--wood2) 70%, var(--wood3) 100%);
+                      box-shadow: 0 18px 30px rgba(0, 0, 0, .55), inset 0 2px 0 rgba(255, 220, 170, .35); }
+      .stand::before { content: ''; position: absolute; left: 8%; right: 8%; bottom: 22px; height: 30px;
+                       background: radial-gradient(50% 100% at 50% 100%, rgba(0, 0, 0, .55), transparent 70%); }
+      .cover { position: relative; z-index: 1; display: block; height: 320px; transform-style: preserve-3d;
+               transform: rotateY(-16deg) rotateX(2deg); transform-origin: left center;
+               transition: transform .45s cubic-bezier(.2, .8, .2, 1), filter .45s; border-radius: 3px 8px 8px 3px;
+               box-shadow: 22px 26px 34px rgba(0, 0, 0, .55), 4px 4px 0 rgba(0, 0, 0, .15); }
+      .cover img { display: block; height: 100%; width: auto; max-width: 100%; border-radius: 3px 8px 8px 3px; }
+      .cover::before { content: ''; position: absolute; inset: 0 auto 0 0; width: 16px; border-radius: 3px 0 0 3px;
+                       background: linear-gradient(90deg, rgba(255, 255, 255, .45), rgba(0, 0, 0, .35) 45%, rgba(255, 255, 255, .12));
+                       pointer-events: none; }
+      .cover::after { content: ''; position: absolute; top: 4px; bottom: 4px; right: -9px; width: 9px; border-radius: 0 3px 3px 0;
+                      background: repeating-linear-gradient(180deg, #fbf5e6 0 2px, #e2d7c0 2px 3px); transform: skewY(-12deg);
+                      transform-origin: left; pointer-events: none; }
+      .item:hover .cover, .item:focus-within .cover { transform: rotateY(-3deg) translateY(-14px); filter: brightness(1.06); }
+
+      .info { padding: 22px 24px 40px; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 6px; }
+      .info h2 { font-family: 'Fraunces', Georgia, serif; font-weight: 600; font-size: 1.55rem; line-height: 1.15; margin: 0;
+                 text-wrap: balance; }
+      .info p { margin: 0; color: var(--muted); font-size: .95rem; }
+      .btns { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin-top: 12px; }
+      .btn { display: inline-flex; align-items: center; gap: 8px; padding: 11px 20px; border-radius: 999px; text-decoration: none;
+             font-weight: 800; font-size: .98rem; transition: transform .15s, box-shadow .15s; }
+      .btn.primary { color: #2a1600; background: linear-gradient(180deg, #ffe07a, var(--gold) 55%, var(--gold2));
+                     box-shadow: 0 6px 18px rgba(255, 160, 40, .35), inset 0 1px 0 rgba(255, 255, 255, .6); }
+      .btn.ghost { color: var(--ink); border: 2px solid rgba(255, 207, 74, .7); }
+      .btn:hover { transform: translateY(-2px); }
+      .btn:focus-visible { outline: 3px solid #fff; outline-offset: 3px; }
+      .note { text-align: center; color: var(--muted); font-size: .85rem; opacity: .8; margin-top: 8px; }
       [hidden] { display: none !important; }
+
+      @media (max-width: 640px) {
+        main { padding-top: 36px; }
+        .stand { height: 300px; }
+        .cover { height: 250px; }
+      }
+      @media (prefers-reduced-motion: reduce) { .cover, .btn { transition: none; } }
     </style>
   </head>
   <body>
     <main>
-      <h1>Bókahillan</h1>
-      <p class="lead" id="lead">Skráðu þig inn með Google til að sjá bækurnar.</p>
-      <div id="signin" data-client={clientId}></div>
+      <header>
+        <div class="moon" aria-hidden="true">🌙</div>
+        <h1>Bókahillan</h1>
+        <p class="tag">Sögur fyrir svefninn og alla hina daga</p>
+      </header>
+
+      <section id="gate">
+        <div class="gatecard">
+          <p>Skráðu þig inn með Google til að opna hilluna.</p>
+          <div id="signin" data-client={clientId}></div>
+        </div>
+      </section>
       <p class="msg" id="msg" hidden></p>
+
       <p class="who" id="who" hidden></p>
       <section class="shelf" id="shelf" hidden></section>
-      <p class="note" id="note" hidden>Tenglarnir gilda í tvær klukkustundir. Endurhlaðið síðuna til að fá nýja.</p>
+      <p class="note" id="note" hidden>Tenglarnir gilda í tvær klukkustundir. Endurhladdu síðuna til að fá nýja.</p>
     </main>
+
     <script is:inline>
       (function () {
-        var el = document.getElementById('signin');
-        var clientId = el.dataset.client;
+        var signin = document.getElementById('signin');
+        var clientId = signin.dataset.client;
         var msg = document.getElementById('msg');
         function say(t) { msg.textContent = t; msg.hidden = !t; }
         if (!clientId) { say('Innskráningin er ekki tilbúin enn.'); return; }
+
+        function el(tag, cls, text) { var e = document.createElement(tag); if (cls) e.className = cls; if (text) e.textContent = text; return e; }
 
         function show(data) {
           var shelf = document.getElementById('shelf');
           shelf.innerHTML = '';
           data.baekur.forEach(function (b) {
-            var card = document.createElement('article'); card.className = 'book';
-            var img = document.createElement('img'); img.src = b.kapa; img.alt = ''; img.loading = 'lazy';
-            var txt = document.createElement('div'); txt.className = 'txt';
-            var h = document.createElement('h2'); h.textContent = b.titill;
-            var p = document.createElement('p'); p.textContent = b.undirtitill;
-            var a = document.createElement('a'); a.href = b.pdf; a.target = '_blank'; a.rel = 'noopener'; a.textContent = 'Opna bókina';
-            txt.append(h, p, a); card.append(img, txt); shelf.append(card);
+            var item = el('article', 'item');
+            var stand = el('div', 'stand');
+            var first = (b.utgafur && b.utgafur[0]) ? b.utgafur[0].pdf : '#';
+            var cover = el('a', 'cover'); cover.href = first; cover.target = '_blank'; cover.rel = 'noopener';
+            cover.setAttribute('aria-label', 'Opna ' + b.titill);
+            var img = el('img'); img.src = b.kapa; img.alt = ''; img.decoding = 'async';
+            cover.append(img); stand.append(cover);
+            var info = el('div', 'info');
+            info.append(el('h2', '', b.titill));
+            if (b.lysing) info.append(el('p', '', b.lysing));
+            var btns = el('div', 'btns');
+            (b.utgafur || []).forEach(function (u, i) {
+              var a = el('a', 'btn ' + (i === 0 ? 'primary' : 'ghost'), u.heiti);
+              a.href = u.pdf; a.target = '_blank'; a.rel = 'noopener';
+              btns.append(a);
+            });
+            info.append(btns);
+            item.append(stand, info);
+            shelf.append(item);
           });
           var who = document.getElementById('who');
           who.textContent = 'Innskráð: ' + data.netfang + ' · ';
-          var out = document.createElement('button'); out.type = 'button'; out.textContent = 'Skrá út';
-          out.onclick = function () { google.accounts.id.disableAutoSelect(); location.reload(); };
+          var out = el('button', '', 'Skrá út'); out.type = 'button';
+          out.onclick = function () { try { google.accounts.id.disableAutoSelect(); } catch (e) {} location.reload(); };
           who.append(out);
-          el.hidden = true; document.getElementById('lead').hidden = true;
+          document.getElementById('gate').hidden = true;
           who.hidden = false; shelf.hidden = false; document.getElementById('note').hidden = false;
         }
+        window.__baekurShow = show; // used only by local previews
 
         function onCredential(resp) {
           say('');
@@ -91,7 +185,7 @@ const clientId = import.meta.env.PUBLIC_GOOGLE_CLIENT_ID ?? '';
         function init() {
           if (!window.google || !google.accounts) return setTimeout(init, 100);
           google.accounts.id.initialize({ client_id: clientId, callback: onCredential, auto_select: true });
-          google.accounts.id.renderButton(el, { theme: 'outline', size: 'large', shape: 'pill', text: 'signin_with', locale: 'is' });
+          google.accounts.id.renderButton(signin, { theme: 'filled_black', size: 'large', shape: 'pill', text: 'signin_with', locale: 'is' });
           google.accounts.id.prompt();
         }
         init();

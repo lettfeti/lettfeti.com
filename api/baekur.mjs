@@ -42,9 +42,9 @@ export async function shelf() {
     (await presignUrl(token, { operation: "get", pathname, validUntil, access: "private" })).presignedUrl;
   return Promise.all(books.map(async (b) => ({
     titill: b.titill,
-    undirtitill: b.undirtitill,
+    lysing: b.lysing,
     kapa: await sign(b.kapa),
-    pdf: await sign(b.pdf),
+    utgafur: await Promise.all((b.utgafur || []).map(async (u) => ({ heiti: u.heiti, pdf: await sign(u.pdf) }))),
   })));
 }
 
