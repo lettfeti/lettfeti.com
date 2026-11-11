@@ -1,0 +1,253 @@
+---
+const flag = '⚑';
+---
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#f8f8fa" />
+    <meta name="description" content="A pocket-sized Minesweeper. Find every safe square, flag the mines, and beat your best time. Free to play, no account needed." />
+    <title>Minesweeper — lettfeti.com</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  </head>
+  <body>
+    <main>
+      <nav><a href="/games">← All games</a><span>ONE PLAYER · ANYTIME</span></nav>
+      <header>
+        <p class="eyebrow">A little focus. A little luck.</p>
+        <h1>Minesweeper<span aria-hidden="true">✳</span></h1>
+        <p class="intro">Clear the board. Leave the mines.</p>
+      </header>
+
+      <section class="game" aria-label="Minesweeper game">
+        <div class="setup">
+          <label class="level-label">Difficulty
+            <select id="difficulty">
+              <option value="easy">Easy · 10 mines</option>
+              <option value="medium">Medium · 20 mines</option>
+              <option value="hard">Hard · 35 mines</option>
+            </select>
+          </label>
+          <button id="restart" class="restart" type="button"><span aria-hidden="true">↻</span> New game</button>
+        </div>
+
+        <div class="stats">
+          <div><span class="stat-label">MINES LEFT</span><strong id="mines">10</strong></div>
+          <div><span class="stat-label">TIME</span><strong id="timer">0:00</strong></div>
+          <div><span class="stat-label">BEST</span><strong id="best">—</strong></div>
+        </div>
+
+        <p id="status" role="status" aria-live="polite">Tap any square to begin. Your first move is safe.</p>
+        <div id="board" class="board" role="group" aria-label="Minefield" aria-describedby="instructions"></div>
+        <noscript><p>Enable JavaScript to play Minesweeper.</p></noscript>
+        <div class="progress"><div id="progress-fill"></div></div>
+        <div class="board-footer"><span id="cleared">0 / 71 safe squares</span><span id="board-size">9 × 9 board</span></div>
+
+        <div class="touch-controls" role="group" aria-label="Tap action">
+          <button id="reveal-mode" type="button" aria-pressed="true"><span aria-hidden="true">⌖</span> Reveal</button>
+          <button id="flag-mode" type="button" aria-pressed="false"><span aria-hidden="true">{flag}</span> Flag</button>
+        </div>
+        <p class="mode-hint" id="mode-hint">Tap a square to reveal it.</p>
+      </section>
+
+      <details id="instructions">
+        <summary>How to play <span aria-hidden="true">+</span></summary>
+        <div class="help">
+          <p>Reveal every safe square to win. Each number tells you how many mines touch that square, including diagonally.</p>
+          <p>Think you found a mine? Switch to <strong>Flag</strong>, then tap to mark it. Tap again in Flag mode to remove it. Switch back to <strong>Reveal</strong> to keep exploring.</p>
+          <p>Your first reveal and its neighbors are always safe. Harder levels add more rows and mines, keeping the board easy to reach on a phone.</p>
+          <p>On a computer, right-click to flag. Use arrow keys to move, Enter or Space for the selected action, and F to flag.</p>
+          <p>Best times are saved on this browser. Changing difficulty or choosing New game starts a fresh board.</p>
+        </div>
+      </details>
+      <footer>Small game. Well-earned break.</footer>
+    </main>
+    <script>
+      import { createGame, levels } from '../../lib/minesweeper.mjs';
+
+      const board = document.querySelector<HTMLDivElement>('#board')!;
+      const difficulty = document.querySelector<HTMLSelectElement>('#difficulty')!;
+      const status = document.querySelector<HTMLParagraphElement>('#status')!;
+      const timer = document.querySelector<HTMLElement>('#timer')!;
+      const best = document.querySelector<HTMLElement>('#best')!;
+      const revealMode = document.querySelector<HTMLButtonElement>('#reveal-mode')!;
+      const flagMode = document.querySelector<HTMLButtonElement>('#flag-mode')!;
+      let level: keyof typeof levels = 'easy';
+      let game = createGame(level);
+      let mode: 'reveal' | 'flag' = 'reveal';
+      let startedAt = 0;
+      let elapsed = 0;
+      let interval: ReturnType<typeof setInterval> | undefined;
+      let buttons: HTMLButtonElement[] = [];
+      let activeIndex = 0;
+
+      const formatTime = (seconds: number) => `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, '0')}`;
+      const storageKey = () => `minesweeper-best-v1-${level}`;
+      function readBest(): number | null {
+        try {
+          const stored = localStorage.getItem(storageKey());
+          const value = stored === null ? NaN : Number(stored);
+          return Number.isInteger(value) && value >= 0 ? value : null;
+        } catch { return null; }
+      }
+      function updateClock() {
+        elapsed = Math.floor((performance.now() - startedAt) / 1000);
+        timer.textContent = formatTime(elapsed);
+      }
+      function setMode(next: typeof mode) {
+        mode = next;
+        revealMode.setAttribute('aria-pressed', String(mode === 'reveal'));
+        flagMode.setAttribute('aria-pressed', String(mode === 'flag'));
+        document.querySelector('#mode-hint')!.textContent = mode === 'reveal' ? 'Tap a square to reveal it.' : 'Tap a square to place or remove a flag.';
+        board.classList.toggle('flag-mode', mode === 'flag');
+      }
+      function render() {
+        const finished = game.status === 'won' || game.status === 'lost';
+        buttons.forEach((button, i) => {
+          const cell = game.cells[i];
+          const showMine = game.status === 'lost' && cell.mine;
+          const wrongFlag = game.status === 'lost' && cell.flagged && !cell.mine;
+          button.className = `cell${cell.revealed ? ' revealed' : ''}${cell.flagged ? ' flagged' : ''}${showMine ? ' mine' : ''}${i === game.exploded ? ' exploded' : ''}${wrongFlag ? ' wrong' : ''}`;
+          button.dataset.number = String(cell.adjacent);
+          button.textContent = wrongFlag ? '×' : showMine ? '✳' : cell.flagged ? '⚑' : cell.revealed && cell.adjacent ? String(cell.adjacent) : '';
+          const description = wrongFlag ? 'Incorrect flag' : showMine ? 'Mine' : cell.flagged ? 'Flagged' : cell.revealed ? `${cell.adjacent} adjacent mines` : 'Hidden';
+          button.setAttribute('aria-label', `Row ${Math.floor(i / game.cols) + 1}, column ${i % game.cols + 1}: ${description}`);
+          button.setAttribute('aria-disabled', String(finished || cell.revealed));
+        });
+        document.querySelector('#mines')!.textContent = String(game.mines - game.flags).padStart(2, '0');
+        const safe = game.cells.length - game.mines;
+        document.querySelector('#cleared')!.textContent = `${game.revealed} / ${safe} safe squares`;
+        document.querySelector<HTMLElement>('#progress-fill')!.style.width = `${game.revealed / safe * 100}%`;
+        status.dataset.state = game.status;
+        status.textContent = game.status === 'won' ? `Board cleared in ${formatTime(elapsed)}. Nicely done!` : game.status === 'lost' ? 'You found a mine. New game, fresh start?' : game.status === 'ready' ? 'Tap any square to begin. Your first move is safe.' : 'Follow the numbers. Find the safe squares.';
+      }
+      function act(index: number, flag = mode === 'flag') {
+        const previous = game.status;
+        if (flag) game.toggleFlag(index);
+        else game.reveal(index);
+        if (previous === 'ready' && game.status !== 'ready') {
+          startedAt = performance.now();
+          interval = setInterval(updateClock, 250);
+        }
+        if ((game.status === 'won' || game.status === 'lost') && previous !== game.status) {
+          updateClock();
+          clearInterval(interval);
+          if (game.status === 'won') {
+            const record = readBest();
+            if (record === null || elapsed < record) {
+              try { localStorage.setItem(storageKey(), String(elapsed)); } catch { /* Playing also works without storage. */ }
+              best.textContent = formatTime(elapsed);
+            }
+          }
+        }
+        render();
+      }
+      function reset() {
+        clearInterval(interval);
+        game = createGame(level);
+        elapsed = 0;
+        timer.textContent = '0:00';
+        const record = readBest();
+        best.textContent = record === null ? '—' : formatTime(record);
+        activeIndex = 0;
+        board.replaceChildren();
+        buttons = game.cells.map((_, index) => {
+          const button = document.createElement('button');
+          button.type = 'button';
+          button.tabIndex = index === 0 ? 0 : -1;
+          button.addEventListener('click', () => act(index));
+          button.addEventListener('contextmenu', event => { event.preventDefault(); act(index, true); });
+          button.addEventListener('focus', () => {
+            buttons[activeIndex].tabIndex = -1;
+            activeIndex = index;
+            button.tabIndex = 0;
+          });
+          button.addEventListener('keydown', event => {
+            if (event.key.toLowerCase() === 'f') { event.preventDefault(); act(index, true); return; }
+            let next = index;
+            if (event.key === 'ArrowRight' && index % game.cols < game.cols - 1) next++;
+            else if (event.key === 'ArrowLeft' && index % game.cols > 0) next--;
+            else if (event.key === 'ArrowDown') next = Math.min(game.cells.length - 1, index + game.cols);
+            else if (event.key === 'ArrowUp') next = Math.max(0, index - game.cols);
+            if (event.key.startsWith('Arrow')) { event.preventDefault(); buttons[next].focus(); }
+          });
+          board.append(button);
+          return button;
+        });
+        document.querySelector('#board-size')!.textContent = `${game.cols} × ${game.rows} board`;
+        setMode('reveal');
+        render();
+      }
+      revealMode.addEventListener('click', () => setMode('reveal'));
+      flagMode.addEventListener('click', () => setMode('flag'));
+      document.querySelector('#restart')!.addEventListener('click', reset);
+      difficulty.addEventListener('change', () => { level = difficulty.value as keyof typeof levels; reset(); });
+      reset();
+    </script>
+  </body>
+</html>
+
+<style is:global>
+  * { box-sizing: border-box; }
+  :root { font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; color: #252332; background: #f8f8fa; font-synthesis: none; }
+  body { margin: 0; }
+  button, select { font: inherit; }
+  button, select, summary { -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
+  button { cursor: pointer; }
+  button:focus-visible, select:focus-visible, a:focus-visible, summary:focus-visible { outline: 3px solid #5a4dde; outline-offset: 3px; }
+  main { max-width: 484px; margin: auto; padding: 28px 20px max(24px, env(safe-area-inset-bottom)); }
+  nav { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 44px; }
+  nav a { color: #585369; font-size: 13px; text-decoration: none; padding: 12px 0; }
+  nav a:hover { color: #5a4dde; }
+  nav > span { font-size: 9px; letter-spacing: 1.4px; color: #777186; }
+  header { margin-bottom: 28px; }
+  .eyebrow { color: #5a4dde; font-size: 11px; font-weight: 650; text-transform: uppercase; letter-spacing: 1.5px; margin: 0 0 12px; }
+  h1 { font-family: Georgia, serif; font-size: clamp(32px, 8vw, 42px); letter-spacing: -1.5px; margin: 0; display: flex; align-items: center; justify-content: space-between; }
+  h1 span { font-family: system-ui, sans-serif; font-size: 44px; color: #5a4dde; font-weight: 400; }
+  .intro { color: #736d81; font-size: 15px; margin: 10px 0 0; }
+  .game { background: #fff; border: 1px solid #e5e2ed; padding: 18px; border-radius: 18px; box-shadow: 0 8px 32px #29204706; }
+  .setup { display: flex; align-items: end; justify-content: space-between; gap: 10px; }
+  .level-label { display: flex; flex-direction: column; gap: 6px; font-size: 11px; color: #736d81; }
+  select { font-size: 13px; color: #39344b; border: 1px solid #e5e2ed; background: #fff; border-radius: 8px; padding: 0 9px; min-height: 44px; max-width: 100%; }
+  .restart { display: flex; align-items: center; gap: 5px; min-height: 44px; padding: 0 10px; background: #f3f1ff; color: #5143ca; border: 1px solid #e6e0ff; border-radius: 8px; font-size: 12px; font-weight: 650; white-space: nowrap; }
+  .restart span { font-size: 23px; }
+  .stats { display: grid; grid-template-columns: repeat(3, 1fr); margin-top: 24px; padding: 16px 0; border-block: 1px solid #eeeaf4; }
+  .stats > div { display: flex; flex-direction: column; gap: 7px; align-items: center; }
+  .stats > div + div { border-left: 1px solid #eeeaf4; }
+  .stat-label { font-size: 9px; letter-spacing: 1.5px; color: #777186; }
+  .stats strong { font: 500 25px ui-monospace, monospace; letter-spacing: -1px; font-variant-numeric: tabular-nums; }
+  #status { font-size: 12px; color: #736d81; line-height: 1.5; min-height: 36px; display: flex; align-items: center; margin: 12px 0; }
+  #status[data-state='won'] { color: #187655; font-weight: 650; }
+  #status[data-state='lost'] { color: #b3364c; font-weight: 650; }
+  .board { display: grid; grid-template-columns: repeat(9, minmax(0, 1fr)); gap: 3px; padding: 4px; background: #f1eef7; border-radius: 9px; }
+  .cell { aspect-ratio: 1; padding: 0; min-width: 0; border: 1px solid #d8d2e7; border-bottom-width: 3px; border-radius: 5px; background: #e7e2f2; color: #5544be; font: 750 clamp(15px, 4vw, 20px) ui-monospace, monospace; display: grid; place-items: center; user-select: none; -webkit-user-select: none; }
+  .cell.revealed { background: #faf9fc; border: 1px solid #eeeaf4; }
+  .cell[data-number='2'] { color: #24785e; }
+  .cell[data-number='3'] { color: #bd4758; }
+  .cell[data-number='4'] { color: #55509d; }
+  .cell[data-number='5'], .cell[data-number='6'], .cell[data-number='7'], .cell[data-number='8'] { color: #8a532c; }
+  .cell.flagged { color: #5a4dde; background: #dcd5fb; }
+  .cell.mine, .cell.wrong { background: #fce7e9; color: #aa3447; border-color: #f0ced4; }
+  .cell.exploded { background: #be4057; color: #fff; border-color: #be4057; }
+  .cell:focus-visible { position: relative; z-index: 1; outline-offset: 0; }
+  @media (hover: hover) { .cell:not(.revealed):not([aria-disabled='true']):hover { background: #d8d0ee; } }
+  .progress { height: 3px; background: #eeebf4; border-radius: 4px; margin: 18px 0 8px; overflow: hidden; }
+  #progress-fill { height: 100%; background: #7c6bdb; }
+  .board-footer { display: flex; justify-content: space-between; font-size: 10px; color: #777186; }
+  .touch-controls { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; padding: 5px; background: #f1eef7; border-radius: 11px; margin-top: 22px; position: sticky; bottom: max(12px, env(safe-area-inset-bottom)); z-index: 2; box-shadow: 0 0 0 4px #fff; }
+  .touch-controls button { display: flex; align-items: center; justify-content: center; gap: 8px; min-height: 48px; border: 1px solid transparent; border-radius: 8px; color: #645d76; background: transparent; font-size: 14px; font-weight: 600; }
+  .touch-controls button span { font-size: 22px; }
+  .touch-controls button[aria-pressed='true'] { color: #fff; background: #5a4dde; box-shadow: 0 2px 6px #4b3caa20; }
+  .mode-hint { font-size: 11px; text-align: center; color: #777186; margin: 12px 0 0; }
+  details { margin-top: 18px; border-bottom: 1px solid #e5e2ed; }
+  summary { list-style: none; display: flex; justify-content: space-between; align-items: center; min-height: 48px; font-size: 13px; font-weight: 600; cursor: pointer; }
+  summary::-webkit-details-marker { display: none; }
+  summary span { font-size: 22px; font-weight: 400; color: #777186; }
+  details[open] summary span { transform: rotate(45deg); }
+  .help { font-size: 13px; color: #736d81; line-height: 1.7; padding-bottom: 10px; }
+  footer { text-align: center; color: #777186; font-size: 11px; margin-top: 24px; }
+  @media (max-width: 420px) { main { padding: 12px 12px max(24px, env(safe-area-inset-bottom)); } nav { margin-bottom: 22px; } header { margin-bottom: 22px; } .game { padding: 12px; } .board { gap: 2px; } select { font-size: 16px; width: 164px; } .restart { padding: 0 8px; } }
+  @media (max-width: 350px) { nav > span { font-size: 8px; letter-spacing: 0.8px; } select { width: 145px; } .restart { font-size: 11px; gap: 3px; } .game { padding: 10px; } .board { padding: 3px; } }
+</style>
